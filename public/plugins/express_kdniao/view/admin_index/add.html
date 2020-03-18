@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>添加快递</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+  </style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+<form name="myform" id="myform" action="{:cmf_plugin_url('ExpressKdniao://admin_index/add')}" method="post" >
+  <p style="font-size:25px">基本信息</p>
+  <table class="table table-bordered table-hover" style="text-align: center;margin-top:20px">
+    <tr>
+      <td>快递公司名称</td>
+      <td>
+        <input type="text" name="company" id="company" class="form-control" required="">
+      </td>
+    </tr>
+    <tr>
+      <td>快递公司编码</td>
+      <td>
+        <input type="text" name="code" id="code" class="form-control" required="">
+      </td>
+    </tr>
+  </table>
+
+</form>
+</div>
+</body>
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+
+</script>
+</html>

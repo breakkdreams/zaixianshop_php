@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>会员管理</title>
+    <include file='public/head'>
+	<link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+	<style>
+		a{color:#18BC9C;}
+	</style>
+</head>
+<body>
+    	
+	<div class="wrap js-check-wrap">
+        <ul class="nav nav-tabs">
+            <li class="active"><a>站点配置-SEO配置</a></li>
+            <li><a href="{:cmf_plugin_url('SiteConfiguration://admin_index/basicInfo')}">站点配置-基本配置</a></li>
+        </ul>
+        <br>
+
+		<form method="POST" class="js-ajax-form  form" id="form" action="{:cmf_plugin_url('SiteConfiguration://admin_index/editSetting')}">
+			<table class="table table-bordered table-hover"  style="text-align:center;width:40%;margin-left:30%">
+
+				<tr >
+					<td class="td-head" style="width:30%;">站点标题：</td>
+					<td class="td-body" >
+	    				<input type="text" class="form-control" style="text-align:center"  name="title"  placeholder="站点标题：" value="{$data.title}" required  >
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="td-head">关键词：</td>
+					<td class="td-body">
+	    				<input type="text" class="form-control" style="text-align:center"  name="keyword"  placeholder="站点标题：" value="{$data.keyword}" required  >
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="td-head">描述：</td>
+					<td class="td-body">
+	    				<input type="text" class="form-control" style="text-align:center"  name="description"  placeholder="站点标题：" value="{$data.description}" required  >
+	    			</td>
+	    		<tr>
+	    		<tr>
+	    			<td class="td-head">LOGO：</td>
+	    			<td class="td-body">
+	    				<div class="layui-form-item" style="margin-top:1px;" >
+							<input  id="picture" name="picture" type="hidden"  value="">
+				            <img src="{$data.img_url}" style="text-align:center"  id="editimg" name="editimg" name="" alt="" >
+				    	</div>
+				    <button type="button" class="layui-btn" id="test1">
+						上传图片
+					</button>
+	    			</td>
+	    		</tr>
+			</table>
+			<div style="text-align:center;">
+				<button type="submit" class="btn btn-success js-ajax-submit "   name="on" >提交</button>
+				<!-- 测试的时候js-ajax-submit从class里取出来 -->
+		    </div>
+
+		</form>
+
+	</div>
+<script src="__STATIC__/js/layui/layui.all.js" charset="utf-8"></script>
+<script src="__STATIC__/js/jquery.js" charset="utf-8"></script>
+<include file="public/scripts"/>
+<script>    
+	var data = ({$da});
+	$('.form').find("input[name=picture]").val(data.img_url);
+    $('.form').find('#editimg').attr('src',data.img_url).css('height','200px');
+
+	
+</script>
+
+<script>
+layui.use('upload', function(){
+  var upload = layui.upload;
+  data = new FormData();
+
+  console.log(data);
+  //执行实例
+  var uploadInst = upload.render({
+    elem: '#test1' //绑定元素
+    ,url: "{:cmf_plugin_url('SiteConfiguration://admin_index/uprwImage')}" //上传接口
+    ,data: data
+    ,done: function(res){
+    	console.log(res.data);
+    	console.log('AAA');
+    	$('.form').find("input[name=picture]").val(res.data);
+   		$('.form').find('#editimg').attr('src',"__ROOT__"+res.data).css('height','200px');
+      //上传完毕回调
+    }
+    ,error: function(){
+      //请求异常回调
+    }
+  });
+});
+</script>
+
+
+
+</body>

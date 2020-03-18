@@ -1,0 +1,68 @@
+<include file="public@head"/>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .detail_box{
+            margin: 10px 0 30px 0px;
+            font-size: 16px;
+        }
+        .detail_text{
+            text-align: right;
+            width: 32%;
+            float: left;
+        }
+        .detail_value{
+            width: 68%;
+            float: left;
+        }
+        .js-ajax-deletes{
+            padding: 6px 20px;
+            margin-left: 32%;
+            margin-top: 24px;
+            /*font-size:16px*/
+        }
+    </style>
+</head>
+<body>
+    <div class="form-group">
+        <div class="col-md-10 detail_box">
+            <div class="detail_text">编号：</div><div  class="detail_value">{$list.id}</div>
+        </div>
+        <div class="col-md-10 detail_box">
+            <div class="detail_text">发放批次：</div><div  class="detail_value">{$list.serial_num}</div>
+        </div>
+        <div class="col-md-10 detail_box">
+            <div class="detail_text"> 发放人：</div><div  class="detail_value">admin</div>
+        </div>
+        <div class="col-md-10 detail_box">
+            <div class="detail_text">可用次数：</div><div  class="detail_value">{$list.coupon_num}</div>
+        </div>
+        <div class="col-md-10 detail_box">
+            <div class="detail_text">用户手机：</div><div  class="detail_value">{$list.phone}</div>
+        </div>
+        <div class="col-md-10 detail_box">
+            <div class="detail_text">使用状态：</div><div  class="detail_value">{$coupon_status[$list.coupon_status]}</div>
+        </div>
+        <div class="col-md-10 detail_box">
+            <div class="detail_text">有效期：</div><div  class="detail_value">{$list.is_deadline==1?date('Y-m-d H:i:s',$list.start_time).'<br/>至 '.date('Y-m-d H:i:s',$list.end_time):'无限制'}</div>
+        </div>
+        <a class="btn btn-xs btn-danger js-ajax-deletes"
+           href="javascript:withdraw({$list.id})" data-msg="确定将优惠券收回吗？">回收</a>
+        <a class="btn btn-xs btn-primary"
+           href="javascript:close()" style="padding: 6px 20px;margin-top: 24px;">关闭</a>
+    </div>
+</body>
+<script>
+    function close(){
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+
+        parent.layer.close(index);
+    }
+    function withdraw(id){
+        window.parent.withdraw(id);
+        close()
+    }
+</script>
+<include file="public@scripts"/>
+</html>

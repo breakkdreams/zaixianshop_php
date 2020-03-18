@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>确认收货</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+  </style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+<form id="myform">
+  <p style="font-size: 25px;">确认退款</p>
+  <table class="table table-bordered table-hover" style="text-align: center;margin-top:20px">
+
+    <input type="hidden" name="orderid" value="{$afterinfo.order_id}">
+    <input type="hidden" name="refund_ordersn" value="{$afterinfo.refund_ordersn}">
+
+    <tr>
+      <td>交易单号</td>
+      <td>
+        <input type="text" name="transaction_id" class="form-control" required="" readonly="readonly" value="{$afterinfo.transaction_id}"><span id="balance">
+      </td>
+    </tr>
+    <tr>
+      <td>退款类型</td>
+      <td style="text-align: left">
+        <input type="hidden" name="pay_type" class="form-control" value="{$afterinfo.pay_type}" required=""><span id="balance">
+          <switch name="$afterinfo.pay_type">
+            <case value="1"><input type="text" class="form-control" name="" value="支付宝" readonly="readonly"></case>
+            <case value="2"><input type="text" class="form-control" name="" value="微信" readonly="readonly"></case>
+            <case value="3"><input type="text" class="form-control" name="" value="银行卡" readonly="readonly"></case>
+            <case value="4"><input type="text" class="form-control" name="" value="余额" readonly="readonly"></case>
+          </switch>
+      </td>
+    </tr>
+    <tr>
+      <td>总金额</td>
+      <td>
+        <input type="text" name="money" class="form-control" required="" value="{$afterinfo.money}" readonly="readonly"><span id="balance">
+      </td>
+    </tr>
+
+    <tr>
+      <td>退款金额</td>
+      <td>
+        <input type="text" name="refund_money" class="form-control" required="" value="{$afterinfo.money}"><span id="balance">
+      </td>
+    </tr>
+  </table>
+</form>
+
+</div>
+</body>
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+
+</script>
+</html>

@@ -1,0 +1,8 @@
+<!-- 导航菜单 -->
+<if condition='cmf_auth_check(cmf_get_current_admin_id(),"admin/update/index")'>
+	<li <?php if( $currentTab == 1 ) echo 'class="active"';?> ><a href="{:url('admin/update/index')}">检查更新</a></li>
+</if>
+
+<if condition='cmf_auth_check(cmf_get_current_admin_id(),"admin/update/exportUpdatePage")'>
+	<li <?php if( $currentTab == 2 ) echo 'class="active"';?> ><a href="{:url('admin/update/exportUpdatePage')}">导出更新包</a></li>
+</if>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>会员管理</title>
+    <include file='public/head'>
+</head>
+<body>
+    	
+
+    <div class="wrap js-check-wrap" style="padding: 20px 20px 0px 20px;">
+        <ul class="nav nav-tabs">
+            <php> $currentTab = 3;</php>
+            <include file="public/nav" />
+        </ul>
+    </div>
+	<div class="wrap js-check-wrap">
+		<form method="POST" class="js-ajax-form" action="{:cmf_plugin_url('Member://member_config/editSetting')}">
+			<table class="table table-bordered table-hover"  style="text-align:center;">
+				<tr>
+					<td class="td-head" style="width:15%;" >新会员默认积分点数</td>
+					<td class="td-body"  >
+					    <div class="input-group" style="width:30%;">
+						<input type="text" class="form-control" style="text-align:center"  name="integral" oninput = "value=value.replace(/[^\d]/g,'')" placeholder="新会员默认积分点数" value="{$data.integral}" required  >
+					    <span class="input-group-addon">/点</span>
+						</div>
+	    			</td>
+				</tr>
+				<tr>
+					<td class="td-head">会员注册协议</td>
+					<td class="td-body">
+	    				<textarea type="text" class="form-control"  name="agreement"    cols="2"   rows="20" >{$data.agreement}</textarea>
+	    			</td>
+	    		<tr>
+			</table>
+			<div style="text-align:center;">
+				<button type="submit" class="btn btn-success js-ajax-submit " name="on" >提交</button>
+				<!-- 测试的时候js-ajax-submit从class里取出来 -->
+		    </div>
+		</form>
+
+	</div>
+<include file="public/scripts"/>
+</body>

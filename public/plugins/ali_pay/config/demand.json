@@ -1,0 +1,1 @@
+{"siteconfiguration_one":{"name":"支付宝支付模块","symbol":"ali_pay","demandName":"站点配置","demandSymbol":"SiteConfiguration","api":"plugins\/site_configuration\/api_index\/getInfo","explain":"获取当前的域名","remark":""}}

@@ -1,0 +1,39 @@
+<script type="text/javascript">
+    //全局变量
+    var GV = {
+        ROOT: "__ROOT__/",
+        WEB_ROOT: "__WEB_ROOT__/",
+        JS_ROOT: "static/js/",
+        DISCOUNT:'/plugin/discount/',
+        APP: '{$Request.module}'/*当前应用名*/
+    };
+</script>
+<script src="__STATIC__/js/jquery.js"></script>
+<script src="__STATIC__/js/wind.js"></script>
+<script src="__STATIC__/js/bootstrap.min.js"></script>
+<script src="__STATIC__/js/admin.js"></script>
+<script src="__STATIC__/js/layer/layer.js"></script>
+<script src="__STATIC__/js/datePicker/datePicker.js"></script>
+<script>
+    function sendajax(vars,post_url){
+        let value={}
+        $.ajax({
+            type : "POST",
+            dataType : "JSON",
+            async: false,
+            url : post_url,
+            data : vars,
+            success : function(data) {
+                if (data.code) {
+                    value=data
+                } else {
+                    layer.alert(data.msg);
+                }
+            },
+            error:function () {
+                layer.msg('请检查网络');
+            }
+        });
+        return value;
+    }
+</script>

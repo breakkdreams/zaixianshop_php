@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>商品信息</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+  </style>
+</head>
+<body>
+  <div class="wrap js-check-wrap">
+    
+    <form>
+        <empty name="keyword">
+        <table class="table table-hover table-bordered table-list" id="menus-table">
+            <thead>
+                <tr>
+                    <th class="text-center"><strong>产品图</strong></th>
+                    <th class="text-center"><strong>产品名称</strong></th>
+                    <th class="text-center"><strong>商品型号</strong></th>
+                    <th class="text-center"><strong>单价</strong></th>
+                    <th class="text-center"><strong>数量</strong></th>
+                    <th class="text-center"><strong>总价</strong></th>
+
+                </tr>
+            </thead>
+              
+            <tbody>
+                <volist name="shopinfo" id="vo"> 
+                <tr>
+                  <td class="text-center"><img src="{$vo.goods_img}" width="30"></td>
+                  <td class="text-center"><a target="_blank" href="{:cmf_plugin_url('Order://admin_index/orderManageShopinfo')}?id={$vo.order_id}">{$vo.goods_name}</a></td>
+                  <td class="text-center">{$vo.specid_name}</td>
+                  <td class="text-center">{$vo.goods_price}</td>
+                  <td class="text-center">{$vo.goods_num}</td>
+                  <td class="text-center">{$vo.goods_price*$vo.goods_num}</td>
+                </tr>
+              </volist>
+                
+            </tbody> 
+        </table>
+    
+    </form>
+
+
+</div>
+</body>
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+
+
+</script>
+</html>

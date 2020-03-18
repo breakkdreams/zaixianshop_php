@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+  	<include file="public/head"/>
+  	<meta charset="utf-8" />
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  	<title>订单配置</title>
+  	<link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  	<style type="text/css">
+      	a{color:#18BC9C;}
+  	</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/order/AdminIndex/index')">
+            <li><a href="{:cmf_plugin_url('Order://admin_index/index')}">订单管理列表</a></li>
+        </if>
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/order/Config/index')">
+            <li class="active"><a href="{:cmf_plugin_url('Order://config/index')}">订单配置</a></li>
+        </if>
+    </ul>
+
+    <form id="order-config" action="{:cmf_plugin_url('Order://config/saveConfig')}" class="js-ajax-form" method="post" style="margin-top:20px">
+    	<b style="font-size: 18px">订单配置</b>
+    	<table class="table table-hover table-bordered" style="width:800px;margin-top:5px">
+    		<thead>
+    			<tr>
+    				<td>模块类型</td>
+    				<td>
+	    				<input type="radio" name="type" value="1" <?php if(isset($order_config['type']) && $order_config['type']==1){echo 'checked';}?> >单用户
+	    				<input type="radio" name="type" value="2" <?php if(isset($order_config['type']) && $order_config['type']==2){echo 'checked';}?> >多用户
+	    			</td>
+    			</tr>
+    			<tr>
+    				<td>操作</td>
+    				<td>
+    					<button type="submit" class="btn btn-success btn-sm js-ajax-submit">保存</button>
+    				</td>
+    			</tr>
+    		</thead>
+    	</table>
+    </form>
+
+
+
+
+    <form id="f" action="{:cmf_plugin_url('Order://config/savePjtime')}" class="js-ajax-form" method='post' style="margin-top:20px">
+	    <b style="font-size: 18px">订单时间配置</b>
+	    <table class="table table-hover table-bordered" style="width:800px;margin-top:5px">
+	    	<thead>
+	    		<tr>
+	    			<td>待支付订单关闭时间</td>
+	    			<td>
+	    				<div class="input-group">
+	    					<input type="text" class="form-control" onkeyup="value=value.replace(/[^\d]+/,'')" name="cuifu" autocomplete="off" placeholder="单位（小时）" value="{$time_config.cuifu}">
+	    					<div class="input-group-addon">小时</div>
+	    				</div>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td>待评价订单保留时间</td>
+	    			<td>
+	    				<div class="input-group">
+		    				<input type="text" class="form-control" onkeyup="value=value.replace(/[^\d]+/,'')" name="pingjia" placeholder="单位（天）" autocomplete="off" value="{$time_config.pingjia}">
+		    				<div class="input-group-addon">天</div>
+	    				</div>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td>默认自动确认收货时间</td>
+	    			<td>
+	    				<div class="input-group">
+		    				<input type="text" class="form-control" onkeyup="value=value.replace(/[^\d]+/,'')" name="shouhuo" placeholder="单位（天）" autocomplete="off" value="{$time_config.shouhuo}">
+		    				<div class="input-group-addon">天</div>
+	    				</div>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td>默认发货时间</td>
+	    			<td>
+	    				<div class="input-group">
+		    				<input type="text" class="form-control" onkeyup="value=value.replace(/[^\d]+/,'')" name="fahuo" placeholder="单位（小时）" autocomplete="off" value="{$time_config.fahuo}">
+		    				<div class="input-group-addon">小时</div>
+	    				</div>
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td>操作</td>
+	    			<td>
+	    				<button type='submit' class="btn btn-success btn-sm js-ajax-submit">保存</button>
+	    			</td>
+	    		</tr>
+	    	</thead>
+	    </table>
+    </form>
+
+    <form method="post" action="{:cmf_plugin_url('Order://config/saveDelayed')}" style="margin-top:30px">
+    	<b style="font-size:18px">收货延时配置</b>
+    	<table class="table table-hover table-bordered" style="width:800px;margin-top:5px">
+			<thead>
+				<tr>
+					<th class="text-center">序号</th>
+					<th class="text-center">延时项（天）</th>
+					<th class="text-center">状态</th>
+					<th class="text-center">操作 <a href="javascript:;" onclick="addyanshi()" class="btn btn-success btn-sm"><i>+</i> 添加</a></th>
+				</tr>
+			</thead>   
+			<tbody>
+				<volist name="order_delayed" id="vo" key="k">
+					<tr>
+						<td class="text-center">{$k}</td>
+						<td class="text-center"><a onclick="editname({$vo.id},'{$vo.ys_name}')" href="javascript:;">{$vo.ys_name}</a></td>
+						<td class="text-center">
+							<switch name="vo.ys_status">
+								<case value="1"><span style="color:green">启动</span></case>
+								<case value="2"><span style="color:orange">禁用</span></case>
+							</switch>
+						</td>
+						<td class="text-center">
+							<if condition="$vo.ys_status==1">
+								<a class="btn btn-warning btn-sm js-ajax-delete" href="{:cmf_plugin_url('Order://config/editYsStatus')}?id={$vo.id}&ys_status={$vo.ys_status}" data-msg="确定禁用吗？">禁用</a>
+								<else />
+								<a class="btn btn-success btn-sm js-ajax-delete" href="{:cmf_plugin_url('Order://config/editYsStatus')}?id={$vo.id}&ys_status={$vo.ys_status}" data-msg="确定启用吗？">启用</a>
+							</if>
+							<a href="{:cmf_plugin_url('Order://config/delys')}?id={$vo.id}" class="btn btn-danger btn-sm js-ajax-dialog-btn">删除</a>
+						</td>
+					</tr>
+				</volist>
+			</tbody> 		
+    	</table>
+    </form>
+</div>
+
+
+<!-- 添加延时配置 -->
+<div id="addys" style="display:none" class="wrap">
+	<form id="ysform" class="form-horizontal">
+		<div class="form-group">
+			<label class="col-sm-2 control-label">延时项</label>
+			<div class="col-sm-10">
+				<input type="text" name="ys_name" onkeyup="value=value.replace(/[^\d]+/,'')" class="form-control" autocomplete="off" placeholder='单位（天）'>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">状态</label>
+			<div class="col-sm-10">
+				<input type="checkbox" name="ys_status">开启/关闭
+			</div>
+		</div>
+	</form>
+	
+</div>
+
+
+<!-- 修改延时项名称 -->
+<div id="editysname" style="display:none" class="wrap">
+	<form id="ysnameform" class="form-horizontal">
+		<div class="form-group">
+			<label class="col-sm-2 control-label">延时项</label>
+			<div class="col-sm-10">
+				<input type="text" name="ys_name" onkeyup="value=value.replace(/[^\d]+/,'')" class="form-control" autocomplete="off" placeholder='单位（天）'>
+			</div>
+		</div>
+	</form>
+</div>
+
+
+
+</body>
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+
+<script type="text/javascript">
+
+//添加延时配置项
+function addyanshi(){
+	layer.open({
+		title:'添加延时项',
+		type:1,
+		btn:['确认','取消'],
+		area:['500px','400px'],
+		content: $('#addys'),
+		yes:function(index,layero){
+			var ysform = $('#ysform').serialize();
+			$.ajax({
+				url:"{:cmf_plugin_url('Order://config/saveDelayed')}",
+				type:'post',
+				data:ysform,
+				success:function(data){
+					if (data.code==1) {
+						layer.msg(data.msg,{icon:1,time:1500},function(){
+							layer.closeAll();
+							window.location.reload();
+						})
+					} else {
+						layer.msg(data.msg,{icon:2,time:1500});
+					}
+				},
+				error:function(){
+					layer.msg('系统错误',{icon:2,time:1500});
+				}
+			})
+		},
+		end:function(){
+			$('#addys').hide();
+		}
+
+	})
+}
+
+
+//修改延时项名称
+function editname(id,ys_name){
+
+	$('#ysnameform').find('input[name=ys_name]').val(ys_name);
+
+	layer.open({
+		title:'修改名称',
+		type:1,
+		btn:['确认','取消'],
+		area:['500px','400px'],
+		content: $('#editysname'),
+		yes:function(index,layero){
+
+			var ys_name = $('#ysnameform').find('input[name=ys_name]').val();
+
+			$.ajax({
+				url:"{:cmf_plugin_url('Order://config/editysName')}",
+				type:'post',
+				data:{id:id,ys_name:ys_name},
+				success:function(data){
+					if (data.code==1) {
+						layer.msg(data.msg,{icon:1,time:1500},function(){
+							layer.closeAll();
+							window.location.reload();
+						})
+					} else {
+						layer.msg(data.msg,{icon:2,time:1500});
+					}
+				},
+				error:function(){
+					layer.msg('系统错误',{icon:2,time:1500});
+				}
+			})
+		},
+		end:function(){
+			$('#editysname').hide();
+		}
+
+	})
+}
+
+</script>
+
+</html>

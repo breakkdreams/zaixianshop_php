@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>修改收货延时</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+  </style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <form class="form-horizontal" id="ysform" style="margin-top:10px">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">延长天数：</label>
+            <div class="radio">
+                <foreach name="$delayed" item="vo">
+                    <label><input type="radio" name="sh_delayed" autocomplete="off" value="{$vo.ys_name}" <?php if($vo['ys_name']==$order['sh_delayed']){echo 'checked';} ?> >{$vo.ys_name}天</label>
+                </foreach>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+
+</script>
+</html>

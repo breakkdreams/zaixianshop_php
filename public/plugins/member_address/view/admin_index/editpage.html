@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<include file="public/head" />
+<meta charset="utf-8" />
+
+<script src="__STATIC__/js/layui/layui.all.js" charset="utf-8"></script>
+<link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+
+</head>
+<body>
+	<form method="POST" class="js-ajax-form" id="da" action="{:cmf_plugin_url('Member://admin_index/add')}">
+		<table class="table table-bordered table-hover"  style="text-align:center;">
+			<input type="text" class="hidden"  name="cri_id"   value="{$data.cri_id}">
+			<tr>
+				<td class="td-head" >上级地区</td> 	
+				<td class="td-body">
+    				<input type="text" class="form-control"  value="{$superior}" disabled="disabled"  >
+    			</td>
+			</tr>
+			<tr>
+				<td class="td-head"><span style="color:red;">*</span>地区名称</td>
+				<td class="td-body">
+    				<input type="text" class="form-control"  name="cri_name"  value="{$data.cri_name}"  placeholder="请输入新增的地区名称">
+    			</td>
+    		<tr>
+    		<tr>
+				<td class="td-head"><span style="color:red;">*</span>地区简称</td>
+				<td class="td-body">
+    				<input type="text" class="form-control"  name="cri_short_name" value="{$data.cri_short_name}" placeholder="请输入新增的地区简称">
+    			</td>
+    		<tr>
+			<tr>
+				<td class="td-head"><span style="color:red;">*</span>地区代码</td>
+				<td class="td-body">
+					<input type="text" class="form-control"  name="cri_code" value="{$data.cri_code}"  placeholder="请输入新增的地区代码" oninput = "value=value.replace(/[^\d]/g,'')">
+				</td>
+    		<tr>
+			<tr>
+				<td class="td-head">地区描述</td>
+				<td class="td-body">
+    				<input type="text" class="form-control" name="cri_memo" value="{$data.cri_memo}"  placeholder="请输入描述">
+    			</td>
+    		<tr>
+		</table>
+	</form>
+
+	
+<include file="public/scripts"/>
+</body>
+</html>

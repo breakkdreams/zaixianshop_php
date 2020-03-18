@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>会员管理</title>
+    <include file='public/head'>
+</head>
+<body>
+
+    <div class="wrap js-check-wrap">
+
+    	<form >
+    		<table class="table table-bordered table-hover"  style="text-align:center;">
+    			<tr>
+    				<td class="td-head" >用户组名</td>
+    				<td class="td-body">
+        				<input type="text" class="form-control"  name="name" placeholder="请输入用户组名">
+        			</td>
+    			</tr>
+    			<tr>
+    				<td class="td-head">简洁描述</td>
+    				<td class="td-body">
+        				<input type="text" class="form-control" name="description" placeholder="请输入简洁描述">
+        			</td>
+        		<tr>
+        	
+    		</table>
+    		<div style="text-align:center;">
+    			<!-- <button type="submit" class="btn btn-success js-ajax-submit" name="on" >提交</button> -->
+    			<!-- 测试的时候js-ajax-submit从class里取出来 -->
+    	    </div>
+    	</form>
+    </div>
+	
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layer/layer.js"></script>
+
+<script type="text/javascript">
+
+    /**
+     * 获取窗口中的元素，然后返回给父级
+     * @return {[type]} [description]
+     */
+    function callbackdata(){
+        let name = $("input[name=name]").val();
+        let description = $("input[name=description]").val();
+
+        if(name==''){
+            layer.msg('用户组名不可为空');
+            return 'error';
+        }
+
+        var arr = new Array();
+        arr['name'] = name;
+        arr['description'] = description;
+
+        return arr;
+    }    
+</script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+{"readConfigInfo":{"name":"评价管理","symbol":"evaluation","demandName":"配置模块","demandSymbol":"site_configuration","api":"plugins\/site_configuration\/api_index\/getInfo","explain":"获取网站配置信息","remark":""},"readgoodsinfo":{"name":"评价管理","symbol":"evaluation","demandName":"商品模块","demandSymbol":"goods","api":"plugins\/goods\/api_index\/goodsinfo","explain":"获取商品信息","remark":""}}

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>公告审核</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+      .cts img{
+        width:100%;
+      }
+  </style>
+</head>
+<body>
+  <div class="wrap js-check-wrap">
+
+    <ul class="nav nav-tabs">
+        <li><a href="javascript:history.go(-1)">返回</a></li>
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/notice/notice_manage/audit')">
+            <li  class="active"><a href="{:cmf_plugin_url('Notice://notice_manage/audit')}">公告审核</a></li>
+        </if>
+    </ul>
+
+    <form class="well form-inline margin-top-20">
+
+      公告标题：
+      <input type="text" class="form-control" name="title" value="<?php if(isset($data['title'])){echo $data['title'];}?>" autocomplete="off">
+      添加时间：
+      <input type="text" class="form-control js-date" name="start_addtime" value="<?php if(isset($data['start_addtime']) && $data['start_addtime']!=''){echo $data['start_addtime'];}?>" autocomplete="off">
+      至
+      <input type="text" class="form-control js-date" name="end_addtime" value="<?php if(isset($data['end_addtime']) && $data['end_addtime']!=''){echo $data['end_addtime'];}?>" autocomplete="off">
+
+      <input type="submit" class="btn btn-primary " value="搜索">
+
+      <span style="font-size: 15px">共{$total}条</span>
+
+    </form>
+
+
+    <form name="myform" id="myform" class="js-ajax-form" action="" method="post">
+        <table class="table table-hover table-bordered table-list" id="menus-table">
+            <thead>
+                <tr>
+                    
+                   <th class="text-center">公告ID</th>
+                   <th class="text-center">创建人</th>
+                   <th class="text-center">标题</th>
+                   <th class="text-center">创建时间</th>
+                   <th class="text-center">状态</th>
+                   <th class="text-center">操作</th>
+                </tr>
+            </thead>
+              
+            <tbody>
+                <volist name="notice" id="vo">
+                    
+                <tr>
+                    
+                    <td class="text-center">{$vo.id}</td>
+                    <td class="text-center">{$vo.release_name}</td>
+                    <td class="text-center" style="width:300px">{$vo.title}</td>
+                    <td class="text-center">{:date('Y-m-d H:i',$vo.add_time)}</td>
+                    <td class="text-center">
+                        <switch name="vo.status">
+                            <case value="1"><span style="color:blue">待发布</span></case>
+                            <case value="2"><span style="color:orange">审核中</span></case>
+                            <case value="3"><span style="color:green">发布中</span></case>
+                            <case value="4"><span style="color:red">被拒绝</span></case>
+                        </switch>
+                    </td>
+                    <td class="text-center">
+                        <a href="{:cmf_plugin_url('Notice://notice_manage/tongguo')}?id={$vo.id}"  class="btn btn-success btn-sm js-ajax-dialog-btn" data-msg="确认通过吗？">通过</a>
+
+                        <a href="javascript:;" onclick="jujue({$vo.id})" class="btn btn-danger btn-sm">拒绝</a>
+
+                        <a href="javascript:;" class="btn btn-sm btn-info" onclick='lookcontent(<?php echo json_encode($vo["content"]); ?> )'> 查看内容 </a>
+                    </td>
+                    
+                </tr>
+                </volist>
+            </tbody> 
+        </table>
+        
+        
+        <div class="pagination">{$page|default=''}</div>
+    </form>
+
+
+</div>
+
+<!-- 公告内容 -->
+<div id="content" style="display:none">
+  <div id="ct" class="cts">
+
+  </div>
+</div>
+
+
+
+
+
+</body>
+
+<!-- 拒绝原因 -->
+<div id="jujue" style="display:none">
+  <form id="juform" style="text-align: center;margin-top:20px">
+    <textarea id="yuanyin" name="refuse_reason" style="width:90%;height:250px"></textarea>
+  </form>
+</div>
+
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/artDialog/artDialog.js" charset="utf-8"></script>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        Wind.css('treeTable');
+        Wind.use('treeTable', function () {
+            $("#menus-table").treeTable({
+                indent: 20,
+                initialState: 'expanded'
+            });
+        });
+    });
+
+
+
+
+//公告拒绝
+function jujue(id){
+    layer.open({
+        title:'拒绝原因',
+        type: 1,
+        btn:["确定","取消"],
+        area: ['500px','400px'],
+        content: $('#jujue'),
+        yes:function(index, layero){
+            var yuanyin = $('#yuanyin').val();
+            $.ajax({
+                url:"{:cmf_plugin_url('Notice://notice_manage/jujue')}?id="+id,
+                data:{refuse_reason:yuanyin},
+                success:function(data){
+                    if(data.code==1){
+                        layer.msg(data.msg,{icon:1,time:1500},function(){
+                            layer.closeAll();
+                            window.location.reload();
+                        });
+                    }else{
+                        layer.msg(data.msg,{icon:2});
+                    }
+                }
+            })
+        },
+        end:function(){
+          $('#jujue').hide();
+        }
+    })
+}
+
+
+
+
+
+//公告内容
+function lookcontent(content){
+
+    $('#ct').html(content);
+
+    layer.open({
+        title:'公告内容',
+        type: 1,
+        btn:["取消"],
+        area:['800px','600px'],
+        content: $('#content').html(),
+    }) 
+}
+
+
+</script>
+</html>

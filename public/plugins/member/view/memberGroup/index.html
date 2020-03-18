@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>会员管理</title>
+    <include file='public/head'>
+</head>
+<body>
+
+    <div class="wrap js-check-wrap" style="padding: 20px 20px 0px 20px;">
+        <ul class="nav nav-tabs">
+            <php> $currentTab = 2;</php>
+            <include file="public/nav" />
+        </ul>
+    </div>
+    
+    <div class="wrap js-check-wrap">
+
+    <form >
+        <table class="table table-bordered table-hover" zIndex="100">
+            <thead>
+                <tr>
+                    <th>会员组ID</th>
+                    <th>用户组名</th>
+                    <th>会员数</th>
+                    <th>操作 &nbsp;<a href="javascript:;" class="btn btn-success btn-sm add-config-btn" onclick="addGroup();"><i class="fa fa-plus-circle normal"></i> 添加会员组</a></th>
+                </tr>
+            </thead>
+            <tbody>
+                <volist name="data" id="vo">
+                <tr>
+                    <td>{$vo.groupid}</td>
+                    <td>{$vo.name}</td>
+                    <td>{$vo.membernum}</td>
+                    <td>
+                        <a class="btn btn-sm btn-info  " onclick="editGroup('{$vo.groupid}')">修改</a>
+                        <a href="{:cmf_plugin_url('Member://memberGroup/deleteGroup')}?groupid={$vo.groupid}"    class="btn btn-sm btn-danger js-ajax-delete" data-msg="确定删除吗？">删除</a>
+                    </td>
+                </tr>
+                </volist>
+            </tbody>
+        </table>
+    <div class="pagination">{$page|default=''}</div>
+
+    </form>
+
+
+
+
+    </div>
+
+
+
+
+
+<include file='public/scripts'>
+<script src="__STATIC__/js/layer/layer.js"></script>
+<script src="__STATIC__/js/custom/custom.js"></script>
+
+<!-- 弹出层 -->
+<script type="text/javascript">
+
+    /**
+     * 添加会员组
+     */
+    function addGroup(){
+        let addpage_url = "{:cmf_plugin_url('Member://memberGroup/addGroupPage')}";
+        let add_url = "{:cmf_plugin_url('Member://memberGroup/addGroup')}";
+
+        layer.open({
+            type: 2,
+            title: '添加会员组',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['550px', '400px'],
+            btn:['提交','关闭'],
+            fixed:false,
+            content: addpage_url, //iframe的url
+            yes:function(index, layero){
+                var body = layer.getChildFrame('body', index); 
+                parentInfo = window["layui-layer-iframe" + index].callbackdata();
+                console.log(parentInfo);
+
+                if (parentInfo=='error') {
+                    return false;
+                };
+
+
+                $.ajax({
+                    url: add_url,
+                    data: {
+                        name: parentInfo.name,
+                        description: parentInfo.description,
+                    },
+                    type:'POST',
+                    dataType:'json',
+                    success: function( result,status,xhr ) {
+                        console.log(result);
+                        if (result.status=="success") {
+                            layer.msg(result.message,{icon:1,time:1000});
+                            setTimeout(function(){            
+                                layer.closeAll('iframe');
+                                window.location.reload();  
+                            },1400)
+                        }else{
+                            layer.msg(result.message,{icon:7,time:1000});
+                            setTimeout(function(){            
+                                layer.closeAll('iframe');
+                                window.location.reload();  
+                            },1400)
+                        }
+                    },
+                });
+
+
+            }
+
+        });
+    }
+
+    /**
+     * 修改会员
+     */
+    function editGroup(data){
+        let editpage_url = "{:cmf_plugin_url('Member://memberGroup/editGroupPage')}?groupid="+data;
+        let edit_url = "{:cmf_plugin_url('Member://memberGroup/editGroup')}";
+
+        layer.open({
+            type: 2,
+            title: '修改会员',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['550px', '400px'],
+            btn:['提交','关闭'],
+            fixed:false,
+            content: editpage_url, //iframe的url
+            yes:function(index, layero){
+                var body = layer.getChildFrame('body', index); 
+
+                parentInfo = window["layui-layer-iframe" + index].callbackdata();
+                console.log(parentInfo);
+                if (parentInfo=='error') {
+                    return false;
+                };
+
+
+                $.ajax({
+                    url: edit_url,
+                    data: {
+                        groupid: parentInfo.groupid,
+                        name: parentInfo.name,
+                        description: parentInfo.description,
+                    },
+                    type:'POST',
+                    dataType:'json',
+                    success: function( result,status,xhr ) {
+                        console.log(result);
+                        if (result.status=="success") {
+                            layer.msg(result.message,{icon:1,time:1000});
+                            setTimeout(function(){            
+                                layer.closeAll('iframe');
+                                window.location.reload();  
+                            },1400)
+                        }else{
+                            layer.msg(result.message,{icon:7,time:1000});
+                            setTimeout(function(){            
+                                layer.closeAll('iframe');
+                                window.location.reload();  
+                            },1400)
+                        }
+                    },
+                });
+
+            }
+        });
+    }
+
+
+
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>快递公司管理</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+  </style>
+</head>
+<body>
+  <div class="wrap js-check-wrap">
+
+    <ul class="nav nav-tabs">
+       
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/admin_index_kdniao/Admin_index/index')">
+            <li><a href="{:cmf_plugin_url('ExpressKdniao://admin_index/index')}">快递配置</a></li>
+        </if>
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/admin_index_kdniao/Admin_index/kdSearch')">
+            <li><a href="{:cmf_plugin_url('ExpressKdniao://admin_index/kdSearch')}">快递查询</a></li>
+        </if>
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/admin_index_kdniao/Admin_index/kdCode')">
+            <li  class="active"><a href="{:cmf_plugin_url('ExpressKdniao://admin_index/kdCode')}">快递公司管理</a></li>
+        </if>
+        
+    </ul>
+
+    <form class="well form-inline margin-top-20">
+        <a class="btn btn-primary" href="javascript:;" onclick="add()">添加快递公司</a>
+    </form>
+
+
+    <form name="myform" id="myform" class="js-ajax-form" action="{:cmf_plugin_url('ExpressKdniao://admin_index/del')}" method="post">
+        <table class="table table-hover table-bordered table-list" id="menus-table">
+            <thead>
+                <tr>
+                    <th>
+                        <label>
+                            <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                        </label>
+                    </th>
+                   <th class="text-center">ID</th>
+                   <th class="text-center">快递公司</th>
+                   <th class="text-center">公司编码</th>
+                   <th class="text-center">操作</th>
+                </tr>
+            </thead>
+              
+            <tbody>
+                <volist name="kuaidi" id="vo">
+                    
+                <tr>
+                    <td>
+                        <label>
+                            <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x"
+                                   name="id[]" value="{$vo.id}">
+                        </label>
+                    </td>
+                    <td class="text-center">{$vo.id}</td>
+                    <td class="text-center">{$vo.company}</td>
+                    <td class="text-center">{$vo.code}</td>
+                    <td class="text-center">
+                        <a href="javascript:;" class="layui-btn layui-btn-success layui-btn-sm"
+                               onclick="edit({$vo.id})">编辑</a>
+                        <a href="{:cmf_plugin_url('ExpressKdniao://admin_index/del')}?id={$vo.id}" class="layui-btn layui-btn-danger layui-btn-sm js-ajax-delete">删除</a>
+                    </td>
+                    
+                </tr>
+                </volist>
+            </tbody> 
+            <div>
+                <button style="margin-bottom:10px" type="submit" class="btn btn-primary btn-sm js-ajax-submit" data-msg="确定要删除吗？">批量删除</button>
+            </div>
+        </table>
+    </empty>
+        
+        <div class="pagination">{$page|default=''}</div>
+    </form>
+
+
+</div>
+</body>
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+
+function edit(id)
+{
+    layer.open({
+        title:'修改信息',
+        type: 2,
+        btn:["确定","取消"],
+        area: ['500px','400px'],
+        content: "{:cmf_plugin_url('ExpressKdniao://admin_index/edit')}?id="+id,
+        yes:function(index,layero){
+            var body = layer.getChildFrame('body', index);
+            $.ajax({
+                url:"{:cmf_plugin_url('ExpressKdniao://admin_index/edit')}?id="+id,
+                data:body.find("#myform").serialize(),
+                success:function(data){
+                    if(data.code==1){
+                        layer.msg(data.msg,{icon:1,time:1500},function(){
+                            layer.closeAll();
+                            window.location.reload();
+                        });
+                    }else{
+                        layer.msg(data.msg,{icon:2});
+                    }
+                }
+            })
+        }
+    })
+}
+
+
+
+function add(){
+    layer.open({
+        title:'添加快递公司',
+        type: 2,
+        btn:["确定","取消"],
+        area: ['500px','400px'],
+        content: "{:cmf_plugin_url('ExpressKdniao://admin_index/add')}",
+        yes:function(index,layero){
+            var body = layer.getChildFrame('body', index);
+            $.ajax({
+                url:"{:cmf_plugin_url('ExpressKdniao://admin_index/add')}",
+                data:body.find("#myform").serialize(),
+                success:function(data){
+                    if(data.code==1){
+                        layer.msg(data.msg,{icon:1,time:1500},function(){
+                            layer.closeAll();
+                            window.location.reload();
+                        });
+                    }else{
+                        layer.msg(data.msg,{icon:2});
+                    }
+                }
+            })
+        }
+    })
+}
+</script>
+</html>

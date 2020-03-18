@@ -1,0 +1,39 @@
+<style>
+	a{color:#18BC9C;}
+</style>
+
+<if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/notice/notice_manage/index')">
+    <li <?php if( $currentTab == 1 ) echo 'class="active"';?>><a href="{:cmf_plugin_url('Notice://notice_manage/index')}">公告管理</a></li>
+</if>
+<if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/notice/in_mail/index')">
+    <li <?php if( $currentTab == 2 ) echo 'class="active"';?>><a href="{:cmf_plugin_url('Notice://in_mail/index')}">站内信管理</a></li>
+</if>
+<!-- <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/notice/sms_manage/index')">
+    <li <?php if( $currentTab == 3 ) echo 'class="active"';?>><a href="{:cmf_plugin_url('Notice://sms_manage/index')}">短信管理</a></li>
+</if> -->
+<if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/notice/email_manage/index')">
+    <li <?php if( $currentTab == 4 ) echo 'class="active"';?>><a href="{:cmf_plugin_url('Notice://email_manage/index')}">邮箱管理</a></li>
+</if>
+<!-- <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/notice/app_manage/index')">
+    <li <?php if( $currentTab == 5 ) echo 'class="active"';?>><a href="{:cmf_plugin_url('Notice://app_manage/index')}">APP管理</a></li>
+</if>
+<if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/notice/applet_manage/index')">
+    <li <?php if( $currentTab == 6 ) echo 'class="active"';?>><a href="{:cmf_plugin_url('Notice://applet_manage/index')}">小程序管理</a></li>
+</if> -->
+<if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/notice/common_manage/index')">
+  	<li <?php if( $currentTab == 7 ) echo 'class="active"';?>><a href="{:cmf_plugin_url('Notice://common_manage/index')}">公众号管理</a></li>
+</if>
+<if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/notice/config/index')">
+    <li <?php if( $currentTab == 8 ) echo 'class="active"';?>><a href="{:cmf_plugin_url('Notice://config/index')}">配置管理</a></li>
+</if>
+
+<!-- <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/Answer/AdminIndex/index')">
+	<li <?php if( $currentTab == 9 ) echo 'class="active"';?> ><a href="{:cmf_plugin_url('Answer://admin_index/index')}">题目库</a></li>
+</if>
+<if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/Answer/test/index')">
+	<li <?php if( $currentTab == 2 ) echo 'class="active"';?> ><a href="{:cmf_plugin_url('Answer://test/index')}">试卷库</a></li>
+</if>
+
+<if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/Answer/user/index')">
+	<li <?php if( $currentTab == 3 ) echo 'class="active"';?> ><a href="{:cmf_plugin_url('Answer://user/index')}">用户库</a></li>
+</if> -->

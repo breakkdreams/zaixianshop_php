@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>编辑</title>
+    <link href="__PLUGIN_TMPL__/public/assets/layui/css/layui.css" rel="stylesheet" type="text/css">
+    <link href="__PLUGIN_TMPL__/public/assets/layui/css/backend.min.css" rel="stylesheet" type="text/css">
+    <include file='public/head'>
+        <style>
+            table th, table td{text-align: center;}
+            .ml-10 { margin-left: 10px; }
+			.layui-icon{font-size: 14px !important;}
+			.layui-form-label{ width: auto;}
+			.layui-btn.layui-btn-sm .fa{ font-size: 14px !important;}
+			.mr4{ margin-right: 4px;}
+			.layui-form-item{ margin-bottom: 0px;}
+			.row{ margin: 0 !important;}
+			.form-horizontal .form-group { margin: 0 0 15px 0}
+			.form-control{ width: auto; padding: 6px 20px 6px 12px; }
+        </style>
+</head>
+<body>
+    <div id="main" role="main">
+        <div class="tab-content tab-addtabs">
+			<div id="content">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<div class="content">
+							<form id="edit-form" class="form-horizontal nice-validator n-default n-bootstrap">
+								<h2></h2>
+								<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">商品规格名称:</label>
+									<div class="col-xs-12 col-sm-8">
+										<input class="form-control" name="name" type="text" value="{$info.specname}" required="required">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">所属栏目:</label>
+								    <div class="col-xs-12 col-sm-8">
+								       
+								        <select type="text" id='cat1' name="cat1" class="form-control" required="required">
+							                <option value="0">  >所属分类</option>
+							            </select>
+							            <if condition="$catarr[1] gt 0">
+								            <select id="cat2" name="cat2" class="form-control">
+								                <option value='0'>请选择</option>
+								                <volist name="$cat2" id="vos">
+								                    <option value='{$vos.catid}' <if condition="$catarr[1] eq $vos.catid">selected='selected'</if> >{$vos.catname}</option>
+								                </volist>
+								            </select>
+								            <else>
+								            <select id="cat2" name="cat2" class="form-control" style="display: none;">
+								                <option value='0'>未选择</option>
+								            </select>    
+								            </if>
+
+								            <if condition="$catarr[2] gt 0">
+								            <select id="cat3" name="cat3" class="form-control">
+								                <option value='0'>请选择</option>
+								                <volist name="$cat3" id="voss">
+								                    <option value='{$voss.catid}' <if condition="$catarr[2] eq $voss.catid">selected='selected'</if> >{$voss.catname}</option>
+								                </volist>
+								            </select>    
+								            <else>    
+								            <select id="cat3" name="cat3" class="form-control" style="display: none;">
+								                <option value='0'>未选择</option>
+								            </select>
+								        </if>
+										<font style="color: #f40">(至少选择一个商品分类)</font>
+								    </div>
+								</div>
+								
+
+								<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">是否可上传图片</label>
+									<div class="col-xs-12 col-sm-8">
+										<div class="radio">
+											<label for="row[status]-normal">
+												<input id="row[status]-normal" <if condition="$info.isallowimg eq 1">checked="checked"</if> name="type" type="radio" value="1"> 是</label> 
+											<label for="row[status]-hidden">
+												<input id="row[status]-hidden" <if condition="$info.isallowimg eq 0">checked="checked"</if> name="type" type="radio" value="0"> 否</label>
+											<font style="color: #f40">(*同一分类下只能设置一个上传图片的规格分类)</font>
+										</div>
+
+									</div>
+									
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">显示/隐藏</label>
+									<div class="col-xs-12 col-sm-8">
+										<div class="radio">
+											<label for="row[status]-normals">
+												<input id="row[status]-normals" <if condition="$info.isshow eq 1">checked="checked"</if> name="status" type="radio" value="1"> 显示</label> 
+											<label for="row[status]-hiddens">
+												<input id="row[status]-hiddens" <if condition="$info.isshow eq 0">checked="checked"</if> name="status" type="radio" value="0"> 隐藏</label>
+											
+										</div>
+									</div>
+								</div>
+
+								
+								
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    
+	<script src="__PLUGIN_TMPL__/public/assets/layui/layui.all.js"></script>
+	<include file='public/scripts'>
+
+	<script type="text/javascript">
+    $(function(){
+        $.post("{:cmf_plugin_url('Goods://goodscats/getcats')}",null,function(data){
+        var str="";
+        var xuanz = "{$catarr[0]}";
+        $.each(data,function(index,info){
+            if (xuanz == info['catid']) {
+                var selected = 'selected="selected"';
+            } else {
+                var selected = ''; 
+            }
+            str+="<option "+selected+" value="+info['catid']+">"+info['catname']+"</option>";
+        })
+        $("#cat1").append(str);
+        })
+       
+       
+        $("#cat1").change(function(){
+
+            if ($(this).val() > 0) {
+                $("#cat2").empty();
+                $.post("{:cmf_plugin_url('Goods://goodscats/getcats')}",{parentId:$(this).val()},function(data){
+                    var str="<option value='0'>请选择</option>";
+                    $.each(data,function(index,info){
+                        str+="<option value="+info['catid']+">"+info['catname']+"</option>";
+                    })
+                    $("#cat2").append(str);
+                    $("#cat2").show();
+                    $("#cat3").hide();
+                })
+            } else {
+                $("#cat2").hide();
+                $("#cat3").hide();
+            }
+        })
+
+        $("#cat2").change(function(){
+            if ($(this).val() > 0) {
+                $("#cat3").empty();
+                $.post("{:cmf_plugin_url('Goods://goodscats/getcats')}",{parentId:$(this).val()},function(data){
+                    var str="<option value='0'>请选择</option>";
+                    $.each(data,function(index,info){
+                        str+="<option value="+info['catid']+">"+info['catname']+"</option>";
+                    })
+                    $("#cat3").append(str);
+                    $("#cat3").show();
+               })
+            } else {
+                $("#cat3").hide();
+            }
+        })
+    })
+
+</script>
+</body>
+</html>
+

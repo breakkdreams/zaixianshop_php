@@ -1,0 +1,64 @@
+<include file="public@header" />
+<style>
+	.nav-tabs li a{color: #18BC9C;}
+</style>
+</head>
+<body>
+	<div id="directory-tree" style="">
+		<div style="padding: 20px;">
+			<h3>选择更新文件</h3>
+			<table class="table table-hover table-bordered table-list" id="list-table">
+				<thead>
+					<tr>
+						<td width="50%">勾选&nbsp;&nbsp;<a href="javascript:;" id="select-all">全选</a>&nbsp;&nbsp;<a href="javascript:;" id="select-cancel">取消</a></td>
+						<td>路径</td>
+					</tr>
+				</thead>
+				<tbody>
+					{$list}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<script src="__STATIC__/js/admin.js"></script>
+	<script src="__STATIC__/js/layer/layer.js"></script>
+	<script>
+	    $(document).ready(function() {
+	        Wind.css('treeTable');
+	        Wind.use('treeTable', function() {
+	            $("#list-table").treeTable({
+	                indent : 20
+	            });
+	        });
+	    });
+	</script>
+	<script>
+		var getChecked = function(){
+			var insert = [];
+			var trList = $('#list-table tbody tr');
+			$.each( trList , function(){
+				let _this = $(this);
+				let check = _this.find( 'input[type=checkbox]' ).is(':checked');
+				if( true == check ){
+					let path = _this.find('td:eq(1)').text();
+					window.parent.res.push( path );
+					insert.push( path );
+				}
+			});
+			return insert;
+		}
+
+		$(document).on("click" , "#select-all" , function(){
+			$(document).find( "input[type=checkbox]" ).each(function(){
+				$(this).prop( 'checked' , true );
+			});
+		});
+
+		$(document).on("click" , "#select-cancel" , function(){
+			$(document).find( "input[type=checkbox]" ).each(function(){
+				$(this).prop( 'checked' , false );
+			});
+		});
+	</script>
+</body>
+</html>

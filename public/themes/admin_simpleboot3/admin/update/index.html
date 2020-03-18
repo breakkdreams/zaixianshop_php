@@ -1,0 +1,162 @@
+<include file="public@header" />
+<link rel="stylesheet" type="text/css" href="__STATIC__/css/layui.css">
+<style>
+	.nav-tabs li a{color: #18BC9C;}
+</style>
+</head>
+<body>
+	<div class="wrap js-check-wrap">
+		<ul class="nav nav-tabs">
+			<!-- <li class="active"><a href="{:url('plugin/index')}">检查更新</a></li> -->
+			<?php $currentTab = 1 ;?>
+			<include file='update/nav'>
+		</ul>
+		<div class="well margin-top-20">
+			<h4>当前系统版本:{$version.version|default="未获取到版本信息"}&nbsp;&nbsp;&nbsp;&nbsp;上次更新时间:{$version.update_date|default='未获取到信息'}&nbsp;&nbsp;&nbsp;&nbsp;最新发布版本:{$lastVersion.version|default='未获取到信息'}&nbsp;&nbsp;&nbsp;&nbsp;最新发布时间:{$lastVersion.add_time|default='未获取到信息'}</h4>
+		</div>
+
+		<form class="form-horizontal">
+			<div class="form-group">
+				<div class="col-sm-12">
+					<h4>在线更新(<span style="font-size: 12px;color:orange;">温馨提示:为避免发生错误,请做好数据备份.</span>)</h4>
+					<hr/>
+				</div>
+			</div>
+
+			<?php if( !isset( $lastVersion['version'] ) || $version['version'] >= $lastVersion['version'] ) { ?>
+				<label for=""  class="col-sm-2 control-label"></label>
+				<div class="col-sm-8" style="padding-bottom:30px; ">
+					<p class="form-control-static" ><h3 style="color:green;"><span class="glyphicon glyphicon-ok-sign"></span>当前系统已是最新版本!</h3></p>
+				</div><br/>
+			<?php }else{ ?>
+				<div class="form-group">
+					<label for="zip"  class="col-sm-2 control-label">当前最新信息:</label>
+					<div class="col-sm-8">
+						<p class="form-control-static">版本:{$lastVersion.version|default='未获取到信息'}&nbsp;&nbsp;&nbsp;&nbsp;发布于:{$lastVersion.add_time|default='未获取到信息'}</p>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="inputEmail3" class="col-sm-2 control-label"></label>
+					<div class="col-sm-10" >
+						<a  class="btn btn-info" href="javascript:;" onclick="onlineUpdate();" >执行在线更新操作</a>
+					</div>
+				</div>
+			<?php } ?>
+		</form>
+
+		<form class="form-horizontal">
+			<div class="form-group">
+				<div class="col-sm-12">
+					<h4>离线更新包(<span style="font-size: 12px;color:orange;">温馨提示:为避免发生的错误,请上传正确的升级压缩包,并且做好数据备份.</span>)</h4>
+					<hr/>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="zip"  class="col-sm-2 control-label">更新文件上传:</label>
+				<div class="col-sm-8">
+					<input type="text" class="form-control" id="zip" readonly placeholder="请上传正确的升级压缩包">
+				</div>
+				<div class="col-sm-2">
+					<button class="btn btn-danger" id="upload-btn" type="button">上传压缩包</button>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="inputEmail3" class="col-sm-2 control-label"></label>
+				<div class="col-sm-10" id="zyoperate-btn" style="display: none;">
+					<a  class="btn btn-success" href="{$update}?url={$updateOperateUrl}">执行更新操作</a>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script src="__STATIC__/js/admin.js"></script>
+	<script src="__STATIC__/js/layui/layui.all.js" charset="utf-8"></script>
+	<script>
+		var uploadIndex = null;
+		layui.use('upload', function(){
+			var $ = layui.jquery
+			,upload = layui.upload;
+
+			upload.render({ //允许上传的文件后缀
+			    elem: '#upload-btn'
+			    ,url: '{:url("admin/update/uploadFile")}'
+			    ,accept: 'file' //普通文件
+			    ,exts: 'zip' //只允许上传压缩文件
+			    ,before:function( obj ){
+			    	//页面层-自定义
+					uploadIndex = layer.open({
+						type: 1,
+						id:'online-bar',
+						title: false,
+						closeBtn: 0,
+						shadeClose: false,
+						area:['200px','100px'],
+						skin: '',
+						content: '<div style="line-height:100px;text-align:center;">更新包上传中,请稍后...'
+					});
+			    }
+			    ,done: function( data ){
+			    	layer.close(uploadIndex);
+			      console.log(data)
+			    	let icon = ( data.code == 200 ) ? 1 : 5;
+			    	layer.msg( data.message , { icon : icon } );
+			    	if( icon == 1 ){
+			    		$('#zyoperate-btn').show();
+			    		$('#zip').val( data.data );
+			    	}
+			    },error:function(){
+			    	layer.close(uploadIndex);
+			    }
+			 });
+
+		});
+	</script>
+	<script>
+		// execute update operate
+		var updateOperate = function( _this )
+		{
+			$.ajax({
+				url:"{:url('admin/update/updateOperate')}",
+				data:{},
+				dataType:'json',
+				success:function(){
+
+				},
+				complete:function(){
+					
+				},
+				error:function(){
+
+				}
+			});
+		}
+
+		// online update
+		var onlineUpdate = function(){
+
+			//页面层-自定义
+			var openIndex = layer.open({
+				type: 1,
+				id:'online-bar',
+				title: false,
+				closeBtn: 0,
+				shadeClose: false,
+				area:['200px','100px'],
+				skin: '',
+				content: '<div style="line-height:100px;text-align:center;">更新包下载中,请勿操作...'
+			});
+			$.post( '{:url("admin/update/onlineUpdate")}' , {} , function( data ){
+				layer.close(openIndex);
+				let icon  = ( data.code == 200 ) ? 1 : 5 ;
+				layer.msg( data.message , { icon : icon } );
+				if( data.code == 200 ){
+					setTimeout( function(){
+						window.location.href = "{$update}?url={$updateOperateUrl}";
+					} , 1200 );
+				}
+			} , 'json' );
+		}
+
+
+	</script>
+</body>
+</html>

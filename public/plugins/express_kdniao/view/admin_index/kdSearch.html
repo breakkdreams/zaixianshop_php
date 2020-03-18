@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>快递查询</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+  </style>
+</head>
+<body>
+  <div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+       
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/express_kdniao/Admin_index/index')">
+            <li><a href="{:cmf_plugin_url('ExpressKdniao://admin_index/index')}">快递配置</a></li>
+        </if>
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/express_kdniao/Admin_index/kdSearch')">
+            <li  class="active"><a href="{:cmf_plugin_url('ExpressKdniao://admin_index/kdSearch')}">快递查询</a></li>
+        </if>
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/express_kdniao/Admin_index/kdCode')">
+            <li><a href="{:cmf_plugin_url('ExpressKdniao://admin_index/kdCode')}">快递公司管理</a></li>
+        </if>
+        
+    </ul>
+    <form class="well form-inline margin-top-20"  action="{:cmf_plugin_url('ExpressKdniao://admin_index/kdSearch')}">
+        快递公司：
+        <select class="form-control" name="ShipperCode" required="">
+          <option value="">请选择</option>
+          <foreach name="$info" item="vo">
+            <option value="{$vo.code}">{$vo.company}</option>
+          </foreach>
+        </select>
+        物流单号：
+        <input type="text" class="form-control" name="LogisticCode" required="">
+        <!-- 订单编号：
+        <input type="text" class="form-control" name="OrderCode" > -->
+
+        <input type="submit" class="btn btn-primary" value="查询">
+    </form>
+
+    <if condition="$msg['Success']==true">
+        <b style="font-size: 20px">搜索结果</b>
+        <table class="table table-bordered table-hover" style="width:800px;margin-top:20px">
+          <tbody>
+            <tr>
+              <th width="125">快递公司</th>
+              <td>
+                {$msg.company}
+              </td>
+            </tr>
+            <tr>
+              <th width="125">物流单号</th>
+              <td>{$msg.LogisticCode}</td>
+            </tr>
+            <tr>
+              <th width="125">物流状态</th>
+              <td>{$msg.State}</td>
+            </tr>
+            <tr>
+              <th width="125">物流跟踪</th>
+              <td style="text-align: left">
+                
+              <?php foreach($msg['Traces'] as $k => $r){?>
+
+              <ul class="layui-timeline">
+                  <li class="layui-timeline-item">
+                    <i class="layui-icon layui-timeline-axis"></i>
+                    <div class="layui-timeline-content layui-text">
+                      <h3 class="layui-timeline-title"><?php echo $r['AcceptTime'];?></h3>
+                      <p><?php echo $r['AcceptStation'];?>
+                      </p>
+                    </div>
+                  </li>
+                </ul>
+
+              <!-- <span><?php echo $r['AcceptStation'];?></span>
+              <span><?php echo $r['AcceptTime'];?></span><br> -->
+              
+              <?php }?>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+    </if>
+</div>
+</body>
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+
+
+</script>
+</html>

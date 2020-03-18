@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>会员管理</title>
+    <include file='public/head'>
+    <style>
+        .td-head{font-weight: bold;}
+    </style>
+</head>
+<body>
+    <div class="wrap js-check-wrap" id="addFormJt">
+
+        <form method="POST" class="js-ajax-form" id="da" action="">
+            <table class="table table-bordered table-hover"  style="text-align:center;">
+                <tr>
+                    <td class="td-head">用户ID</td>
+                    <td class="td-body">
+                        {$data.uid}
+                    </td>
+                    <td class="td-head" >用户名</td>
+                    <td class="td-body">
+                        {$data.username}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-head" >头像</td>
+                    <td class="td-body">   
+                        <img src="{$data.avatar | default='__PLUGIN_TMPL__/public/image/nophoto.gif'}">
+                    </td>
+                    <td class="td-head">昵称</td>
+                    <td class="td-body">
+                        {$data.nickname}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-head">手机号</td>
+                    <td class="td-body">
+                        {$data.mobile}
+                    </td>
+                    <td class="td-head">邮箱</td>
+                    <td class="td-body">
+                        {$data.email}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-head">注册日期</td>
+                    <td class="td-body">
+                        {:date('Y-m-d H:i:s',$data.create_time)}
+                    </td>
+                    <td class="td-head">注册ip</td>
+                    <td class="td-body">
+                        {$data.create_ip}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-head">vip会员</td>
+                    <td class="td-body">
+                        <if condition="$data['vip'] eq 1">
+                            是
+                        <elseif condition="$data['vip'] eq 0">
+                            否
+                            </if>
+                    </td>
+                    <td class="td-head">到期时间</td>
+                    <td class="td-body">
+                        {:date('Y-m-d H:i:s',$data.overduedate)}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-head">会员组</td>
+                    <td class="td-body">
+                        <volist name="member_group" id="group">
+                            <if condition="$data.groupid eq $group.groupid">
+                                {$group.name}
+                            </if>
+                        </volist>
+                    </td>
+                    <td class="td-head" >状态</td>
+                    <td class="td-body">
+                        <if condition="$data['islock'] eq 1">
+                            正常
+                        <elseif condition="$data['islock'] eq 2">
+                            禁用
+                        <else>
+                            禁用
+                        </else>
+                        </elseif>
+                        </if>
+                    </td>
+                </tr>
+            </table>
+            
+
+            <div style="text-align:center;">
+                <!-- <button type="submit" class="btn btn-success js-ajax-submit" name="on" >提交</button> -->
+                <!-- 测试的时候js-ajax-submit从class里取出来 -->
+            </div>
+        </form>
+    </div>
+
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layer/layer.js"></script>
+
+
+<script type="text/javascript">
+
+    /**
+     * 获取窗口中的元素，然后返回给父级
+     * @return {[type]} [description]
+     */
+    function callbackdata(){
+        var arr = '';
+        // $("input[name=ceshi]").each(function(){
+        //     arr = $(this).val()+','+arr;
+        // })
+        // console.log(arr);
+
+
+        return '1'
+    }    
+</script>
+
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <include file="public/head"/>
+    <title>银行信息</title>
+</head>
+<body>
+<div class="wrap">
+	<ul class="nav nav-tabs">
+		<li><a href="{:cmf_plugin_url('Fund://admin_index/index')}" >提现列表</a></li>
+		<li><a href="{:cmf_plugin_url('Fund://admin_index/recharge')}">充值列表</a></li>
+		<li><a href="{:cmf_plugin_url('Fund://admin_index/banklist')}">银行信息</a></li>
+        <li><a href="{:cmf_plugin_url('Fund://payment/index')}">配置管理</a></li>
+	</ul>
+
+<div style="margin-top: 20px;"><a class="btn " href="{:cmf_plugin_url('Fund://payment/index')}">支付宝配置</a><a class="btn btn-info" href="{:cmf_plugin_url('Fund://payment/wechat')}">微信配置</a></div>
+
+<form method="post" class="js-ajax-form" action="{:cmf_plugin_url('Fund://payment/config_wechat')}">
+
+   <table class="table table-hover table-bordered" style="margin-top:20px;width:600px">
+   	<tbody>
+		<tr>
+			<td width="200">是否开启微信支付</td>
+			<td>
+				<if condition="$da['wechatpay_off']==0">
+				<label><input name="setconfig[wechatpay_off]" checked type="radio" value="0"/>开</label> 
+				<label><input name="setconfig[wechatpay_off]" type="radio" value="1"/>关</label>
+				<else />
+				<label><input name="setconfig[wechatpay_off]"  type="radio" value="0"/>开</label> 
+				<label><input name="setconfig[wechatpay_off]" checked type="radio" value="1"/>关</label>
+			    </if>
+				<a target="_blank" href="https://pay.weixin.qq.com" style="color:red;">（https://pay.weixin.qq.com/）</a>
+            </td>
+		</tr>
+		<tr>
+			<td width="200">微信公众号 appid</td>
+			<td><input type="text" name="setconfig[wechatpay_appid]" class="form-control" value="{$da['wechatpay_appid']}" ></td>
+		</tr>
+		<tr>
+			<td width="200">微信公众号 appsecret</td>
+			<td><input type="text" name="setconfig[wechatpay_appsecret]" class="form-control"  value="{$da['wechatpay_appsecret']}" ></td>
+		</tr>
+		<tr>
+			<td width="200">微信支付 商户号</td>
+			<td><input type="text" name="setconfig[wechatpay_mchid]" class="form-control"  value="{$da['wechatpay_mchid']}" ></td>
+		</tr>
+		<tr>
+			<td width="200">微信支付 密钥</td>
+			<td><input type="text" name="setconfig[wechatpay_key]" class="form-control"  value="{$da['wechatpay_key']}" ></td>
+		</tr>
+
+	</tbody>
+   </table>
+   <button class="js-ajax-submit btn btn-success" type="submit">提交</button>
+</form>
+
+</div>
+<include file="public/scripts"/>
+</body>
+
+</html>

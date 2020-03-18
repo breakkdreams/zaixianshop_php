@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<include file="public/head"/>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<title>邮箱管理列表</title>
+	<link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+	<style type="text/css">
+	a{color:#18BC9C;}
+	</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+	<ul class="nav nav-tabs">
+        <php> $currentTab = 4 ;</php>
+        <include file="public/nav" />
+    </ul>
+
+    <form class="well form-inline margin-top-20">
+        <a class="btn btn-primary" href="{:cmf_plugin_url('Notice://email_manage/addsms')}">添加消息</a>
+    </form>
+
+    <form id="myform" class="js-ajax-form" action="{:cmf_plugin_url('Notice://email_manage/delsms')}" method="post">
+        <table class="table table-hover table-bordered table-list" id="menus-table">
+            <thead>
+                <tr>
+                    <th class="text-center" width="50">
+                        <label>
+                            <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                        </label>
+                    </th>
+                    <th class="text-center">id</th>
+                    <th class="text-center">收件人</th>
+                    <th class="text-center">标题</th>
+                    <th class="text-center">内容</th>
+                    <th class="text-center">创建时间</th>
+                    <th class="text-center">发送时间</th>
+                    <th class="text-center">状态</th>
+                    <th class="text-center">操作</th>
+                </tr>
+            </thead>
+                <volist name="send" id="vo">
+                    <tr>
+                        <td class="text-center" width="50">
+                            <label>
+                                <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x"
+                                   name="id[]" value="{$vo.id}">
+                            </label>
+                        </td>
+                        <td class="text-center">{$vo.id}</td>
+                        <td class="text-center">{$vo.recipients}</td>
+                        <td class="text-center">{$vo.title}</td>
+                        <td class="text-center">{$vo.content}</td>
+                        <td class="text-center">{$vo.create_time?date('Y-m-d H:i:s',$vo.create_time):'--'}</td>
+                        <td class="text-center">{$vo.send_time?date('Y-m-d H:i:s',$vo.send_time):'--'}</td>
+                        <td class="text-center">
+                            <switch name="$vo.is_success">
+                                <case value="1"><span style="color:green">成功</span></case>
+                                <case value="2"><span style="color:red">失败</span></case>
+                                <case value="0"><span>未发送</span></case>
+                            </switch>
+                        </td>
+                        <td class="text-center">
+                            <if condition="$vo.is_success==0">
+                                <a class="btn btn-primary btn-sm" href="{:cmf_plugin_url('Notice://email_manage/editsms')}?id={$vo.id}">修改</a>
+                                <a class="btn btn-success btn-sm js-ajax-dialog-btn" data-msg="确定要发送吗？" href="{:cmf_plugin_url('Notice://email_manage/fasong')}?id={$vo.id}">发送</a>
+                            </if>
+                            <if condition="$vo.is_success==2">
+                                <a class="btn btn-primary btn-sm" href="{:cmf_plugin_url('Notice://email_manage/editsms')}?id={$vo.id}">修改</a>
+                                <a class="btn btn-sm btn-success js-ajax-dialog-btn" data-msg="确定要发送吗？" href="{:cmf_plugin_url('Notice://email_manage/fasong')}?id={$vo.id}">重新发送</a>
+                            </if>
+                            <if condition="$vo.is_success==1">
+                                --
+                            </if>
+                        </td>
+                    </tr>
+                </volist>
+              
+            <tbody>
+                
+            </tbody> 
+        </table>
+        <div style="margin-left:10px">
+            <label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                全选/取消
+            </label>
+            <button style="margin-left:10px"  type="submit" class="btn btn-primary btn-sm js-ajax-submit" data-msg="确定要删除吗？">批量删除</button>
+        </div>
+        
+        <div class="pagination">{$page|default=''}</div>
+
+    </form>
+
+</div>
+</body>
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+</html>

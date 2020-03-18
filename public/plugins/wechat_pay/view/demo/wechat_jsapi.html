@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>模块演示</title>
+    <include file='public/head'>
+</head>
+<body>
+
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+    //调用微信JS api 支付
+    function jsApiCall()
+    {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            <?php echo $jsApiParameters; ?>,
+            function(res){
+                WeixinJSBridge.log(res.err_msg);
+                //alert(res.err_code+res.err_desc+res.err_msg);
+                if(res.err_msg == "get_brand_wcpay_request:ok"){
+                    //弱鸡写法，利用微信支付返回成功与否，成功着利用axjx进行数据交互
+                    $.get('{APP_PATH}index.php', {m:'zypay', c:'wechat', a:'wechat_jsapi_iswxpay', order_sn:'<?php echo $order_sn ?>', random:Math.random()},function(data){
+                        alert(data);
+                        if (data == 'success'){
+                            alert('支付成功');
+                            
+                            //window.location.href = "index.php?m=member&c=index&a=init"; //页面跳转
+                        }
+                    });                 
+                    
+                    
+                }
+            }
+        );
+    }
+
+    function callpay()
+    {
+        if (typeof WeixinJSBridge == "undefined"){
+            if( document.addEventListener ){
+                document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+            }else if (document.attachEvent){
+                document.attachEvent('WeixinJSBridgeReady', jsApiCall); 
+                document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+            }
+        }else{
+            jsApiCall();
+        }
+    }
+    </script>
+    <script type="text/javascript">
+    //获取共享地址
+    function editAddress()
+    {
+        WeixinJSBridge.invoke(
+            'editAddress',
+            <?php echo $editAddress; ?>,
+            function(res){
+                var value1 = res.proviceFirstStageName;
+                var value2 = res.addressCitySecondStageName;
+                var value3 = res.addressCountiesThirdStageName;
+                var value4 = res.addressDetailInfo;
+                var tel = res.telNumber;
+                
+                alert(value1 + value2 + value3 + value4 + ":" + tel);
+            }
+        );
+    }
+    
+    window.onload = function(){
+        if (typeof WeixinJSBridge == "undefined"){
+            if( document.addEventListener ){
+                document.addEventListener('WeixinJSBridgeReady', editAddress, false);
+            }else if (document.attachEvent){
+                document.attachEvent('WeixinJSBridgeReady', editAddress); 
+                document.attachEvent('onWeixinJSBridgeReady', editAddress);
+            }
+        }else{
+            editAddress();
+        }
+    };
+    
+    </script>
+
+
+    <div class="wrap js-check-wrap">
+        <ul class="nav nav-tabs">
+            <li class="active"><a>微信支付演示</a>
+            </li>
+        </ul>
+        <br>
+
+<button class="footer_btn" type="button" onclick="callpay()" >立即支付</button>
+
+
+    </div>
+
+<include file="public/scripts"/>
+</body>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>编辑</title>
+    <link href="__PLUGIN_TMPL__/public/assets/layui/css/layui.css" rel="stylesheet" type="text/css">
+    <link href="__PLUGIN_TMPL__/public/assets/layui/css/backend.min.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="__PLUGIN_TMPL__/public/plugins/gupload/webuploader.css" />
+    <link rel="stylesheet" type="text/css" href="__PLUGIN_TMPL__/public/plugins/gupload/style.css" />
+    <script>
+	window.conf = {"GPATH":"{:cmf_plugin_url('Goods://goods/getSpecAttrs')}","GUPPATH":"{:cmf_plugin_url('Goods://goods/upspecimg')}","GTUPPATH":"{:cmf_plugin_url('Goods://goods/uploadthumb')}","STATIC":"__PLUGIN_TMPL__/public/image/goodsspecimg"}
+	</script>
+	<script language="javascript" type="text/javascript" src="__PLUGIN_TMPL__/public/plugins/gupload/common.js"></script>
+    <include file='public/head'>
+        <style>
+            table th, table td{text-align: center;}
+            .ml-10 { margin-left: 10px; }
+			.layui-icon{font-size: 14px !important;}
+			.layui-form-label{ width: auto;}
+			.layui-btn.layui-btn-sm .fa{ font-size: 14px !important;}
+			.mr4{ margin-right: 4px;}
+			.layui-form-item{ margin-bottom: 0px;}
+			.row{ margin: 0 !important;}
+			.form-horizontal .form-group { margin: 0 0 15px 0}
+			.form-controls{ width: auto; padding: 6px 20px 6px 12px; }
+			#filePicker div:nth-child(2){width:100%!important;height:100%!important;}
+			.j-specImg div:nth-child(2){width:100%!important;height:100%!important;}
+			.wst-tips-box { height: auto; line-height: 25px; -moz-border-radius: 5px; -webkit-border-radius: 5px; color: red; border: 1px dotted #f0a869; background: #a1f3e3/*#ffc*/; padding: 5px 5px 5px 15px; margin-left: 10px; margin-bottom: 5px; margin-top: 10px;}
+			.spec-item{float:left;margin:2px;}
+			.spec-item .item-del{background:url(__PLUGIN_TMPL__/public/image/icon_no.png);width:13px;height:13px;display:inline-block;position: relative;top:-10px;left:-10px;cursor:pointer;}
+			.spec-ipt{width:80px;}
+			.specs-sale-table{width:100%;border-collapse:collapse;border:1px solid #dddddd;margin-bottom:10px;}
+			.specs-sale-table th{padding-top:5px;text-align:center;background:#eeeeee;text-align:center;border:1px solid #dddddd}
+			.specs-sale-table td{text-align:center;text-align:center;border:1px solid #dddddd}
+			.spec-sale-goodsNo{width:150px}
+			input[type="text"].spec-sale-ipt{width:50px;}
+			.spec-sale-text{width:80%;padding:6px 6px;}
+			.attr-table{width:100%}
+			.attr-table th{text-align:right;}
+			.attr-table td{text-align:left;}
+			#goodsImgPicker{margin-left:20px;}
+			.spec-line{border-top:1px dashed #cccccc;margin:5px 0px 7px 0px;clear:both;}
+			.spec-head{font-weight:bold;height:40px;line-height:40px;/*background:url(__PLUGIN_TMPL__/public/image/img_seller_ggjt.png) no-repeat 0px 7px;*/padding-left:45px;}
+			.lm1{background:url(__PLUGIN_TMPL__/public/image/lm1.png) no-repeat 0px 0px; background-size: 40px;}
+			.lm2{background:url(__PLUGIN_TMPL__/public/image/lm2.png) no-repeat 0px 0px; background-size: 40px;}
+			.lm3{background:url(__PLUGIN_TMPL__/public/image/lm3.png) no-repeat 0px 0px; background-size: 40px;}
+			.spec-body{border:1px solid #cccccc;padding:5px;margin-bottom:10px;}
+			label { margin-right: 10px;}
+			#specattr input[type=text], input[type=password] { display: inline-block; width: auto; height: 30px; padding: 6px 12px; line-height: 1.42857143; color: #555; background-color: #fff; background-image: none; border: 1px solid #ccc; border-radius: 4px; -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075); box-shadow: inset 0 1px 1px rgba(0,0,0,.075); -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s; -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s; transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;}
+			#specattr tr{ line-height: 24px; } #specattr select { border-radius: 4px; border-color: #ccc; height: 30px; margin-right: 5px;}
+			#specattr th{ line-height: 24px; padding: 8px 0; }  #specattr td{ vertical-align:middle !important;} 
+			#specsAttrBox .webuploader-container, #specsAttrBox .webuploader-container .webuploader-pick { width: 80px; height: 27px; line-height: 27px; overflow: hidden;}
+			#specattr .webuploader-pick {padding: 0} #specattr .btn {  padding: 3px 12px;}
+			#specTby td { padding-bottom: 5px;}
+			#spec-sale-tby td { padding: 2px;}
+        </style>
+</head>
+<body>
+    <div class="wrap js-check-wrap">
+    	
+	    
+	    	<input type="hidden" name="gid" value="{$info.id}">
+	    	<input type="hidden" name="spid" value="{$info.shopid}">
+	        <div class="tab-content tab-addtabs">
+				
+	        	<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+					<ul class="layui-tab-title">
+					    <li class="layui-this">商品信息</li>
+					    <li>规格属性</li>
+					    <li>商品相册</li>
+					</ul>
+					<div class="layui-tab-content">
+						
+						<div class="layui-tab-item layui-show form-horizontal nice-validator n-default n-bootstrap">
+
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-2">商品主图:</label>
+								<div class="col-xs-12 col-sm-8">
+									<div class="input-group">
+										<input id="image_info" name="image" type="hidden" value="{$info.goodsimg}">
+										<div class="input-group-addon no-border no-padding">
+											
+											
+										</div>
+										<span class="msg-box n-right"></span>
+									</div>
+									<ul class="row list-inline plupload-preview" id="image_list">
+										
+										<if condition="$info.goodsimg neq ''">
+					                        <li class="col-xs-3"><a href="" data-url="#" target="_blank" class="thumbnail"><img src="__PLUGIN_TMPL__/public/image/goodsimg/{$info.goodsimg}" class="img-responsive"></a><a href="javascrispt:;" class="btn btn-danger btn-xs btn-trash"><i class="fa fa-trash"></i></a></li>
+					                    </if>
+									</ul>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-2">商品名称:</label>
+								<div class="col-xs-12 col-sm-8">
+									<textarea class="form-control" name="gtitle" id="gtitle" >{$info.goodsname}</textarea>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-2">商品类型:</label>
+							    <div class="col-xs-12 col-sm-8">
+							       
+							        <select type="text" id='gtype' name="gtype" class="form-control" required="required">
+						                <option value="1" <if condition="$info.goodstype eq 1">selected="selected"</if> > 实物商品</option>
+						                <option value="2" <if condition="$info.goodstype eq 2">selected="selected"</if> > 虚拟商品</option>
+						            </select>
+							    </div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-2">市场价格:</label>
+								<div class="col-xs-12 col-sm-8">
+									<input class="form-control" name="mprice" type="text" value="{$info.marketprice}">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-2">店铺价格:</label>
+								<div class="col-xs-12 col-sm-8">
+									<input class="form-control" name="sprice" type="text" value="{$info.shopprice}">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-2">商品库存:</label>
+								<div class="col-xs-12 col-sm-8">
+									<input class="form-control" name="stock" type="text" value="{$info.goodsstock}">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-2">商品状态</label>
+								<div class="col-xs-12 col-sm-8">
+									<div class="radio">
+										<label for="row[status]-normals"><input id="row[status]-normals" name="status" type="radio" value="1" <if condition="$info.issale eq 1">checked="checked"</if> > 上架</label> 
+										<label for="row[status]-hiddens"><input id="row[status]-hiddens" name="status" type="radio" value="0" <if condition="$info.issale eq 0">checked="checked"</if> > 下架</label>
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">所属栏目:</label>
+								    <div class="col-xs-12 col-sm-8">
+								       
+								        <select type="text" id='cat1' name="cat1" disabled="disabled" class="form-control form-controls" required="required">
+							                <option value="0">  >商城分类:</option>
+							            </select>
+							            <if condition="$catarr[1] gt 0">
+								            <select id="cat2" name="cat2" disabled="disabled" class="form-control form-controls">
+								                <option value='0'>请选择</option>
+								                <volist name="$cat2" id="vos">
+								                    <option value='{$vos.catid}' <if condition="$catarr[1] eq $vos.catid">selected='selected'</if> >{$vos.catname}</option>
+								                </volist>
+								            </select>
+								            <else>
+								            <select id="cat2" name="cat2" disabled="disabled" class="form-control form-controls" style="display: none;">
+								                <option value='0'>未选择</option>
+								            </select>    
+								            </if>
+
+								            <if condition="$catarr[2] gt 0">
+								            <select id="cat3" name="cat3" disabled="disabled" class="form-control form-controls">
+								                <option value='0'>请选择</option>
+								                <volist name="$cat3" id="voss">
+								                    <option value='{$voss.catid}' <if condition="$catarr[2] eq $voss.catid">selected='selected'</if> >{$voss.catname}</option>
+								                </volist>
+								            </select>    
+								            <else>    
+								            <select id="cat3" name="cat3" disabled="disabled" class="form-control form-controls" style="display: none;">
+								                <option value='0'>未选择</option>
+								            </select>
+								        </if>
+										
+								    </div>
+								</div>
+
+							<div class="form-group">
+								<label class="control-label col-xs-12 col-sm-2">商品详情图:</label>
+								<div class="col-xs-12 col-sm-8">
+									<div class="input-group">
+										<div class="input-group-addon no-border no-padding">
+											<span style="position: relative;">
+												
+												
+											</span>
+											
+										</div>
+										<span class="msg-box n-right"></span>
+									</div>
+									<ul class="row list-inline plupload-preview" id="images_lists">
+
+										<if condition="$info.goodsinfo neq ''">
+											<volist name="$info.goodsinfo" id="v">
+					                        <li class="col-xs-3">
+					                        	<a data-url="#" class="thumbnail"><img src="__PLUGIN_TMPL__/public/image/goodsinfo/{$v}" class="img-responsive"></a>
+					                        	<a href="javascrispt:;" class="btn btn-danger btn-xs btn-trash"><i class="fa fa-trash"></i></a>
+					                        	<input type="hidden" name="goodsinfoimg[]" value="{$v}" >
+					                        </li>
+					                    	</volist>
+					                    </if>
+
+									</ul>
+								</div>
+							</div>
+
+						</div>
+
+
+					    <div class="layui-tab-item" id="specattr">
+					    	<input type="hidden" id="specattrdata" name="specattrdata" value="">
+					    	<div id='specsAttrBox'></div>
+							<div id='specTips' style="display: none;">
+								<div class='wst-tips-box' style='margin-left:0px;'>
+									1.若改动商品规格时，销售规则表将会重新绘制，填写销售规格表前前选择好商品规格<br>
+									2.已加入购物车商品规格规格改变时将失效删除<br>
+									3.店铺用户修改商品需要重新审核
+								</div>
+							</div>
+							<div id='specBtns' style='margin:0px auto;text-align:center;display:none'></div>
+						</div>
+
+					    <div class="layui-tab-item" id="galbum">
+					    	<div id="wrapper">
+						        <div id="container">
+						            <!--头部，相册选择和格式选择-->
+
+						            <div id="uploader">
+						                <div class="queueList">
+						                    
+
+						                    <if condition="$info.goodsalbum neq ''">
+						                    <ul class="filelist" >
+									            <volist name="$info.goodsalbum" id="vs" key="k">
+											    <li  class="state-complete" style="border: 1px solid rgb(59, 114, 165);">
+											       <p class="title"></p>
+											       <p class="imgWrap">
+											          <img src="__PLUGIN_TMPL__/public/image/goodsthumb/{$vs}">
+											       </p>
+											       <input type="hidden" value="{$vs}" key="{$k}" name="timg[]" class="j-gallery-img">
+											       
+											    </li>
+											    </volist>
+										    </ul>
+											</if>
+
+						                </div>
+						                <div class="statusBar" <if empty($info.goodsalbum)>style="display:none;"</if> >
+						                    
+						                    
+						                </div>
+						            </div>
+						        </div>
+						    </div>
+
+							<div style='margin:0px auto;text-align:center;border-top:1px solid #cccccc;padding-top:10px;'>
+					    </div>
+
+					</div>
+				</div>      
+
+				
+			</div>
+		
+	</div>
+    
+    <script type='text/javascript' src='__PLUGIN_TMPL__/public/plugins/gupload/jquery.js'></script>
+
+    
+	<script type='text/javascript' src='__PLUGIN_TMPL__/public/plugins/gupload/goods.js'></script>
+	<script src="__PLUGIN_TMPL__/public/assets/layui/layui.all.js"></script>
+	<include file='public/scripts'>
+	
+
+<script type="text/javascript">
+
+    $(function(){
+        $.post("{:cmf_plugin_url('Goods://goodscats/getcats')}",null,function(data){
+        var str="";
+        var xuanz = "{$catarr[0]}";
+        $.each(data,function(index,info){
+            if (xuanz == info['catid']) {
+                var selected = 'selected="selected"';
+            } else {
+                var selected = ''; 
+            }
+            str+="<option "+selected+" value="+info['catid']+">"+info['catname']+"</option>";
+        })
+        $("#cat1").append(str);
+        })
+
+        $("#cat1").change(function(){
+        	var mythis = $(this);
+            if ($(this).val() > 0) {
+                $("#cat2").empty();
+                $.post("{:cmf_plugin_url('Goods://goodscats/getcats')}",{parentId:$(this).val()},function(data){
+                    var str="<option value='0'>请选择</option>";
+
+                    $.each(data,function(index,info){
+                        str+="<option value="+info['catid']+">"+info['catname']+"</option>";
+                    })
+                    $("#cat2").append(str);
+                    $("#cat2").show();
+                    $("#cat3").hide();
+
+                    getSpecAttrs(mythis.val());
+                })
+            } else {
+                $("#cat2").hide();
+                $("#cat3").hide();
+            }
+        })
+
+        $("#cat2").change(function(){
+    		var mythis = $(this);
+            if ($(this).val() > 0) {
+                $("#cat3").empty();
+                $.post("{:cmf_plugin_url('Goods://goodscats/getcats')}",{parentId:$(this).val()},function(data){
+                    var str="<option value='0'>请选择</option>";
+                    $.each(data,function(index,info){
+                        str+="<option value="+info['catid']+">"+info['catname']+"</option>";
+                    })
+                    $("#cat3").append(str);
+                    $("#cat3").show();
+                    getSpecAttrs(mythis.val());
+               })
+            } else {
+                $("#cat3").hide();
+            }
+        })
+
+    	$("#cat3").change(function(){
+            if ($(this).val() > 0) {
+                getSpecAttrs($(this).val());
+            }
+        })
+    })
+
+
+    
+
+</script>
+
+</body>
+</html>
+

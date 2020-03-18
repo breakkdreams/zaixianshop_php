@@ -1,0 +1,22 @@
+[2019-11-09 16:04:42] 微信付款到银行卡失败，appid：wx5b74a5c289a4b2a5,{
+    "return_code": "SUCCESS",
+    "return_msg": "支付失败",
+    "result_code": "FAIL",
+    "err_code": "NOTENOUGH",
+    "err_code_des": "出款账户余额不足,请充值[请勿换单]",
+    "nonce_str": "QaQnmYR7qcOv",
+    "mch_id": "1430180902",
+    "partner_trade_no": "2019110904044084",
+    "amount": "1"
+}
+[2019-11-09 16:05:50] 微信付款到银行卡失败，appid：wx5b74a5c289a4b2a5,{
+    "return_code": "SUCCESS",
+    "return_msg": "支付失败",
+    "result_code": "FAIL",
+    "err_code": "NOTENOUGH",
+    "err_code_des": "出款账户余额不足,请充值[请勿换单]",
+    "nonce_str": "MCp8orUmfpSc",
+    "mch_id": "1430180902",
+    "partner_trade_no": "2019110904054925",
+    "amount": "1"
+}

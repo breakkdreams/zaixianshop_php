@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>会员管理</title>
+    <include file='public/head'>
+	<link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+	<style>
+		a{color:#18BC9C;}
+	</style>
+</head>
+<body>
+    	
+	<div class="wrap js-check-wrap">
+        <ul class="nav nav-tabs">
+            <li><a href="{:cmf_plugin_url('SiteConfiguration://admin_index/index')}">站点配置-SEO配置</a></li>
+            <li class="active"><a>站点配置-基本配置</a></li>
+        </ul>
+        <br>
+
+		<form method="POST" class="js-ajax-form  form" id="form" action="{:cmf_plugin_url('SiteConfiguration://admin_index/editBasicSetting')}">
+			<table class="table table-bordered table-hover"  style="text-align:center;width:40%;margin-left:30%">
+
+				<tr >
+					<td class="td-head" style="width:30%;">站点名称：</td>
+					<td class="td-body" >
+	    				<input type="text" class="form-control" style="text-align:center"  name="site_name"  placeholder="站点名称：" value="{$data.site_name}" required  >
+
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="td-head">站点目录：</td>
+					<td class="td-body">
+	    				<input type="text" class="form-control" style="text-align:center"  name="site_table"  placeholder="站点目录：" value="{$data.site_table}" required  >
+	    			</td>
+	    		</tr>
+	    		<tr>
+	    			<td class="td-head" >站点域名：</td>
+					<td class="td-body">
+						(默认public后无'/')
+						<input type="text" class="form-control" style="text-align:center"  name="site_domain"  placeholder="站点标题：" value="{$data.site_domain}" required  >
+	    			</td>
+	    		<tr>
+				<tr>
+	    			<td class="td-head" >封装APP入口路径：</td>
+					<td class="td-body">
+	    				<input type="text" class="form-control" style="text-align:center"  name="app_path"  placeholder="封装APP入口路径:" value="{$data.app_path}" required  >
+	    			</td>
+	    		<tr>
+	    	
+			</table>
+			<div style="text-align:center;">
+				<button type="submit" class="btn btn-success js-ajax-submit "   name="on" >提交</button>
+				<!-- 测试的时候js-ajax-submit从class里取出来 -->
+		    </div>
+
+		</form>
+
+	</div>
+<script src="__STATIC__/js/layui/layui.all.js" charset="utf-8"></script>
+<script src="__STATIC__/js/jquery.js" charset="utf-8"></script>
+<include file="public/scripts"/>
+
+
+
+
+
+
+</body>

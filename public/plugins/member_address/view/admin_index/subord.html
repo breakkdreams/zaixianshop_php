@@ -1,0 +1,222 @@
+	<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<include file="public/head" />
+<style>
+	a{color:#18BC9C;}
+</style>
+</head>
+<body>
+	
+	<div class="wrap js-check-wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="{:cmf_plugin_url('MemberAddress://admin_index/index')}">联动菜单</a></li>
+			<li><a href="{:cmf_plugin_url('MemberAddress://user_address/index')}">用户收货地址管理</a></li>
+		</ul>
+	
+	<br />
+	<form  id="dara">
+		<table class="table table-bordered table-hover" style="text-align:center;">
+			<thead class="well">
+				<tr>  
+					<th style="text-align:center;width:10%;">ID</th>
+					<th style="text-align:center;width:10%;">排序</th>
+					<th style="text-align:center;">地区名称</th>
+					<th style="text-align:center;">地区简称</th>
+					<th style="text-align:center;">地区描述</th>
+					<th style="text-align:center;">是否显示</th>
+					<th style="text-align:center;">操作</th>
+				</tr>
+			</thead>
+			<tbody>
+				<volist name="data" id="vo">
+				<tr>
+					<td >{$vo.cri_id}</td>
+					<td ><input type="text" id="{$vo.cri_id}"  style="width:40%;text-align:center;" value="{$vo.cri_sort}" oninput = "value=value.replace(/[^\d]/g,'')"></td>
+					<td >{$vo.cri_name}</td>
+					<td >{$vo.cri_short_name}</td>
+					<td >{$vo.cri_memo}</td> 	 
+					<if condition="$vo.status eq 2">
+						<td ><a style="text-decoration:none;color:red;"  class=" js-ajax-delete" data-msg="确定变更状态为显示吗？"
+						href="{:cmf_plugin_url('MemberAddress://admin_index/turn_on')}?cri_id={$vo.cri_id}" >×</a></td>
+					<elseif condition="$vo.status eq 1">
+						<td ><a style="text-decoration:none;color:green;"  class=" js-ajax-delete" data-msg="确定变更状态为隐藏吗？" 
+						href="{:cmf_plugin_url('MemberAddress://admin_index/turn_off')}?cri_id={$vo.cri_id}" >√</a></td>
+					</elseif>
+					</if>
+					<td >
+						<if condition="$vo.subord eq 1">
+						<a class="btn btn-sm btn-success "  href="{:cmf_plugin_url('MemberAddress://admin_index/Subord')}?cri_superior_code={$vo.cri_code}">查看下级地区</a>|
+						</if>
+						<a class="btn btn-sm  btn-primary " onclick="addSubord({$vo.cri_id})">添加下级地区</a>
+						|
+						<a class="btn btn-sm  btn-primary " onclick="editSubord({$vo.cri_id})">编辑</a>
+						|
+						<a  class="btn btn-sm btn-warning js-ajax-delete " data-msg="确定删除吗？" 
+						href="{:cmf_plugin_url('MemberAddress://admin_index/del')}?cri_id={$vo.cri_id}" >删除</a>
+					</td>
+				</tr>
+				</volist>
+			</tbody>
+		</table>
+		<div >
+			<a class="btn btn-sm  btn-primary " onclick="sort()">排序</a>
+            <a class="btn btn-sm  btn-primary " onclick="addSubord({$fa_id})">当前页添加分类</a>
+			<a class="btn btn-sm  btn-primary "  href="{:cmf_plugin_url('MemberAddress://admin_index/Subord')}?cri_superior_code={$fa_code}">返回上级</a>
+	    </div>
+		
+    	<div class="pagination">{$page|default=''}</div>
+	</form>
+	</div>
+<script src="__STATIC__/js/layui/layui.all.js" charset="utf-8"></script>
+<script src="__STATIC__/js/layer.js" charset="utf-8"></script>
+<include file="public/scripts"/>
+<script>
+//页面层
+function addSubord(data){
+	layer.open({
+	title:"添加下级地区",
+	closeBtn: 1, //不显示关闭按钮
+    type: 2,
+    offset: '150px',
+    btn:['提交'],
+	// type: 1,
+	// skin: 'layui-layer-rim', //加上边框
+	area: ['400px', '380px'], //宽高
+	content: "{:cmf_plugin_url('MemberAddress://admin_index/addPage')}?cri_id="+data,
+	// content: $('#addMember')
+	yes:function(index, layero){
+        var body = layer.getChildFrame('body', index);
+        var dara = body.find('#da').serialize();
+        var name = body.find('input[name=cri_name]').val();
+        var code = body.find('input[name=cri_code]').val();
+        var short_name = body.find('input[name=cri_short_name]').val();
+
+        if(name==''){
+            layer.msg('地区名称不可为空', function(){
+			});
+            return false;
+        }
+        if(short_name==''){
+            layer.msg('地区简称不可为空', function(){
+			});
+            return false;
+        }
+        if(code==''){
+            layer.msg('地区代码不可为空', function(){
+			});
+            return false;
+        }
+        $.ajax({
+            url:"{:cmf_plugin_url('MemberAddress://admin_index/add')}",
+            data:dara,
+            success:function(data){
+                if(data.type=='success'){
+            		layer.msg(data.msg,{time:2000},function(){
+	                    layer.closeAll();
+						window.location.reload();
+	                });
+            	}else if(data.type=='error'){
+                	layer.msg(data.msg);
+            	}
+            },
+            error:function(data){
+                layer.msg('添加失败');
+                return false;
+            }
+        })
+    }
+	});
+}
+</script>
+<script>
+//页面层
+function editSubord(data){
+	layer.open({
+	title:"编辑地区信息",
+	closeBtn: 1, //不显示关闭按钮
+    type: 2,
+    offset: '150px',
+    btn:['提交'],
+	// type: 1,
+	// skin: 'layui-layer-rim', //加上边框
+	area: ['400px', '380px'], //宽高
+	content: "{:cmf_plugin_url('MemberAddress://admin_index/editPage')}?cri_id="+data,
+	yes:function(index, layero){
+        var body = layer.getChildFrame('body', index);
+        var dara = body.find('#da').serialize();
+        var name = body.find('input[name=cri_name]').val();
+        var code = body.find('input[name=cri_code]').val();
+        var short_name = body.find('input[name=cri_short_name]').val();
+
+        if(name==''){
+            layer.msg('地区名称不可为空', function(){
+			});
+            return false;
+        }
+        if(short_name==''){
+            layer.msg('地区简称不可为空', function(){
+			});
+            return false;
+        }
+        if(code==''){
+            layer.msg('地区代码不可为空', function(){
+			});
+            return false;
+        }
+        $.ajax({
+            url:"{:cmf_plugin_url('MemberAddress://admin_index/edit')}",
+            data:dara,
+            success:function(data){
+                if(data.type=='success'){
+            		layer.msg(data.msg,{time:2000},function(){
+	                    layer.closeAll();
+						window.location.reload();
+	                });
+            	}else if(data.type=='error'){
+                	layer.msg(data.msg);
+            	}
+            },
+            error:function(data){
+                layer.msg('添加失败');
+                return false;
+            }
+        })
+    }
+	});
+}
+</script>
+<script>
+//页面层
+function sort(){
+
+	var list = $('#dara').find("input[type='text']");
+	var data=new Array();
+	var key=new Array();
+	var value=new Array();
+	for(var i=0;i<list.length && list[i];i++)
+	{
+		key[i] = list[i].id;
+		value[i] = list[i].value;
+	}
+	$.ajax({
+	    url:"{:cmf_plugin_url('MemberAddress://admin_index/sort')}?key="+key+'&value='+value,
+	    data:data,
+	    success:function(data){
+	        if(data.type=='success'){
+			window.location.reload();
+	    	}else if(data.type=='error'){
+	        	layer.msg('排序失败');
+	    	}
+	    },
+	    error:function(data){
+	        layer.msg('排序失败');
+	        return false;
+	    }
+	})
+
+}
+</script>
+
+</body>

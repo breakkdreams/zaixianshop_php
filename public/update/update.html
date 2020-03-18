@@ -1,0 +1,86 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>升级程序</title>
+	<style>
+		.error{
+			color:red;
+		}
+		.success{
+			color:green;
+		}
+		ul li{
+			height: 25px; 
+			line-height: 25px;
+		}
+	</style>
+</head>
+<body>
+<div>
+	<ul  class="status-ul" style="list-style-type: none;">
+		<li><h3>更新程序执行中,请稍后</h3></li>
+		<li></li>
+	</ul>
+</div>
+</body>
+<script src="../static/js/jquery.js"></script>
+<script type="text/javascript">
+	//显示信息
+	var showMessage = function( status , message ){
+		var li = '<li class="'+(status ?'success':'error')+'">-'+message+'</li>';
+		$('.status-ul').append(li);
+	}
+	$(document).ready(function(){
+		var protocol = window.location.protocol;
+		var host = window.location.host;
+		var param = window.location.search;
+		var action = param.split('=')[1];
+		let url = protocol+'//'+host+'/'+action;
+		$.ajax({
+			url:url,
+			data:{},
+			dataType:'json',
+			beforeSend:function(){
+				xx;
+				showMessage( true , '系统更新中,请勿操作<span class="loading"></span>' );
+			},
+			success:function(data){
+				console.log(data);
+				showMessage(data.status , data.message);
+				if( data.code == 200 ){
+					showMessage( true , '即将刷新页面,请稍后...' );
+					setTimeout(function(){
+						window.parent.location.reload();
+					} , 1600 );
+				}else{
+					showMessage( true , '<a href="javascript:history.go(-1);">返回上一页</a>' );
+				}
+			},
+			error:function(){
+				showMessage(false, '请求错误,请稍后再试!');
+			},
+			complete:function(){
+				clearInterval(xx);
+				$('.loading').text( ' (更新完成!)' );
+			}
+		});
+		
+		/**
+		 * 动态显示
+		 */
+		var str = 0;
+		let strarr = [ '.','..','...','....'];
+		 var xx = setInterval(function(){
+		 	if( str > strarr.length ){
+		 		str = 0;
+		 	}
+		 	$('.loading').text( strarr [ str ] );
+		 	str++;
+		 },300);
+	});
+	
+
+	
+</script>
+</html>

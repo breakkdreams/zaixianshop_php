@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>公告列表</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+  </style>
+</head>
+<body>
+  <div class="wrap js-check-wrap">
+
+    <ul class="nav nav-tabs">
+        <php> $currentTab = 1 ;</php>
+        <include file="public/nav" />
+    </ul>
+
+    <form class="well form-inline margin-top-20">
+        公告标题：
+        <input type="text" class="form-control" name="title" value="<?php if(isset($data['title'])){echo $data['title'];}?>" autocomplete="off">
+        添加时间：
+        <input type="text" class="form-control js-date" name="start_addtime" value="<?php if(isset($data['start_addtime']) && $data['start_addtime']!=''){echo $data['start_addtime'];}?>" autocomplete="off">
+        至
+        <input type="text" class="form-control js-date" name="end_addtime" value="<?php if(isset($data['end_addtime']) && $data['end_addtime']!=''){echo $data['end_addtime'];}?>" autocomplete="off">
+
+        <select class="form-control" name="status">
+            <option value="">全部状态</option>
+            <option value="1" <?php if(isset($data['status']) && $data['status']==1){echo 'selected';}?> >待发布</option>
+            <option value="2" <?php if(isset($data['status']) && $data['status']==2){echo 'selected';}?> >审核中</option>
+            <option value="3" <?php if(isset($data['status']) && $data['status']==3){echo 'selected';}?> >发布中</option>
+            <option value="4" <?php if(isset($data['status']) && $data['status']==4){echo 'selected';}?> >被拒绝</option>
+        </select>
+
+        <input type="submit" class="btn btn-primary " value="搜索">
+
+        <a href="{:cmf_plugin_url('Notice://notice_manage/addNotice')}" class="btn btn-success"><i class="fa fa-plus-circle normal"></i> 添加公告</a>
+        <a href="{:cmf_plugin_url('Notice://notice_manage/audit')}" class="btn btn-primary">公告审核</a>
+
+        <span style="font-size: 15px">共{$total}条</span>
+
+    </form>
+
+
+    <form name="myform" id="myform" class="js-ajax-form" action="{:cmf_plugin_url('Notice://notice_manage/delNotice')}" method="post">
+        <table class="table table-hover table-bordered table-list" id="menus-table">
+            <thead>
+                <tr>
+                    <th class="text-center" width="50">
+                        <label>
+                            <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                        </label>
+                    </th>
+                    <th class="text-center">公告ID</th>
+                    <th class="text-center">创建人</th>
+                    <th class="text-center">标题</th>
+                    <th class="text-center">创建时间</th>
+                    <th class="text-center">发布时间</th>
+                    <th class="text-center">状态</th>
+                    <th class="text-center">操作</th>
+                </tr>
+            </thead>
+              
+            <tbody>
+                <volist name="notice" id="vo">
+                    
+                <tr>
+                    <td class="text-center">
+                        <label>
+                            <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x"
+                                   name="id[]" value="{$vo.id}">
+                        </label>
+                    </td>
+                    <td class="text-center">{$vo.id}</td>
+                    <td class="text-center">{$vo.release_name}</td>
+                    <td class="text-center" style="width:300px">{$vo.title}</td>
+                    <td class="text-center">{:date('Y-m-d H:i',$vo.add_time)}</td>
+                    <td class="text-center">{$vo.release_time ? date('Y-m-d H:i',$vo.release_time) : '--'}</td>
+                    <td class="text-center">
+                        <switch name="vo.status">
+                            <case value="1"><span style="color:blue">待发布</span></case>
+                            <case value="2"><span style="color:orange">审核中</span></case>
+                            <case value="3"><span style="color:green">发布中</span></case>
+                            <case value="4"><span style="color:red">被拒绝</span></case>
+                        </switch>
+                    </td>
+                    <td class="text-center">
+                        <a href="{:cmf_plugin_url('Notice://notice_manage/editNotice')}?id={$vo.id}" class="btn btn-success btn-sm">修改</a>
+
+                        <if condition="$vo.status == 1">
+                          <a href="{:cmf_plugin_url('Notice://notice_manage/release')}?id={$vo.id}" class="btn btn-primary btn-sm js-ajax-dialog-btn" data-msg="确定要发布？">开始发布</a>
+                        </if>
+
+                        <if condition="$vo.status == 4">
+                          <a href="{:cmf_plugin_url('Notice://notice_manage/release')}?id={$vo.id}" class="btn btn-primary btn-sm js-ajax-dialog-btn" data-msg="确定要发布？">重新发布</a>
+                          <a href="jacascript:;" class="btn btn-info btn-sm" onclick="reason('{$vo.refuse_reason}')">拒绝原因</a>
+                        </if>
+                    </td>
+                    
+                </tr>
+                </volist>
+            </tbody> 
+        </table>
+        <div style="margin-left:10px">
+            <label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                全选/取消
+            </label>
+            <button style="margin-left:10px"  type="submit" class="btn btn-primary btn-sm js-ajax-submit" data-msg="确定要删除吗？">批量删除</button>
+        </div>
+        
+        <div class="pagination">{$page|default=''}</div>
+    </form>
+
+
+</div>
+
+<div id="jujue" style="display:none">
+  <form style="text-align: center;margin-top:20px">
+    <textarea id="yuanyin" style="width:90%;height:250px"></textarea>
+  </form>
+</div>
+
+
+
+</body>
+
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/artDialog/artDialog.js" charset="utf-8"></script>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        Wind.css('treeTable');
+        Wind.use('treeTable', function () {
+            $("#menus-table").treeTable({
+                indent: 20,
+                initialState: 'expanded'
+            });
+        });
+    });
+
+
+
+
+//公告拒绝原因
+function reason(refuse){
+
+  console.log(refuse);
+
+  $('#yuanyin').text(refuse);
+
+    layer.open({
+        title:'拒绝原因',
+        type: 1,
+        btn:["确定","取消"],
+        area: ['500px','400px'],
+        content: $('#jujue').html(),
+    })
+}
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</html>

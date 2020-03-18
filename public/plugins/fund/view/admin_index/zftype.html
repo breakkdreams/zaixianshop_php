@@ -1,0 +1,228 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <include file="public/head"/>
+    <title>支付列表</title>
+</head>
+<body>
+<div class="wrap">
+	<ul class="nav nav-tabs">
+		<li><a href="{:cmf_plugin_url('Fund://admin_index/index')}">提现列表</a></li>
+    <li><a href="{:cmf_plugin_url('Fund://admin_index/recharge')}">充值列表</a></li>
+    <li><a href="{:cmf_plugin_url('Fund://admin_index/payment')}">支付列表</a></li>
+    <li ><a href="{:cmf_plugin_url('Fund://admin_index/refundmManagement')}">退款列表</a></li>
+    <li><a href="{:cmf_plugin_url('Fund://admin_index/accountList')}">用户账户列表</a></li>
+    <li class="active"><a href="{:cmf_plugin_url('Fund://admin_index/zftype')}">支付类型</a></li>
+		<li><a href="{:cmf_plugin_url('Fund://admin_index/banklist')}">银行信息</a></li>
+		<li><a href="{:cmf_plugin_url('Fund://payment/index')}">配置管理</a></li>
+    </ul>
+
+    <form method="post" class="js-ajax-form" action="#" style="width:800px;">
+
+
+        <table class="table table-hover table-bordered" style="margin-top:20px">
+                <thead>
+                    <tr>
+                        <th  align="center">tid</th>
+                        <th  align="center">图片</th>
+                        <th  align="center">名称</th>
+                        <th  align="center">状态</th>
+                        <th  align="center">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <volist name="da" id="vo">
+                       <tr>
+                        <td  align="center">{$vo['tid']}</td>
+                        <td  align="center"><img src="__ROOT__/{$vo['photo']}" style="height:50px"></td>
+                        <td  align="center">{$vo['name']}</td>
+                        <td  align="center">
+                        <switch name="$vo['type']">
+                           <case value="1">开启</case> 
+                           <case value="2">关闭</case> 
+                        </switch></td>
+                        <td  align="center"><a class="btn btn-success btn-sm js-ajax-delete" data-msg="确认修改状态？" href="{:cmf_plugin_url('Fund://admin_index/uptype')}?id={$vo['tid']}&type={$vo['type']}" style="margin-left: 5px;" >
+                            <switch name="$vo['type']">
+                                    <case value="1">关闭</case> 
+                                    <case value="2">开启</case> 
+                                 </switch>
+                        </a></td>
+                       </tr>
+                    </volist>
+                  
+                </tbody>
+
+  
+        </table>
+
+    </form>
+
+
+
+
+ 
+
+    <!-- 添加类型 -->
+<div id="add" style="display:none">
+
+        <form class="form-horizontal margin-top-20 editFormfa js-ajax-form" action="{:cmf_plugin_url('Fund://admin_index/addtype')}" style="width:80%">
+            
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-4 control-label">类型名称</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" required name="name" value="" > 
+                </div>
+                <br>
+            </div>
+
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-4 control-label">类型名称</label>
+                <div class="col-sm-8">
+                   <input type="hidden" class="tupain" name="zhumb" value="">
+                  <label>
+                    <img src="__PLUGIN_TMPL__/public/assets/images/timg.png"  class="logoimg" style="height: 100px;">
+                    <input type="file" id="front" accept="image/png,image/jpeg,image/jpg" ref="inputer" onchange="photo(this)" style="position:absolute;opacity:0;">
+                  </label> 
+                </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="inputEmail3" class="col-sm-4 control-label">是否开启</label>
+              <div class="col-sm-8">
+                <select class="form-control" required name="type">
+                  <option value="1">开启</option>
+                  <option value="2">关闭</option>
+                </select>
+              </div>
+            </div>
+    
+            <div class="form-group margin-top-20">
+                <div class="col-sm-offset-4 col-sm-10">
+                  <button type="submit" class="btn btn-primary js-ajax-submit">立即提交</button>
+                </div>
+              </div>
+    
+              
+        </form>
+        
+    </div>
+
+
+
+
+
+
+
+      <!-- 修改类型 -->
+<div id="edit" style="display:none">
+
+        <form class="form-horizontal margin-top-20 editForm" action="{:cmf_plugin_url('Fund://admin_index/uptype')}" style="width:80%">
+   
+            <input name="id" id="tid" type="hidden" value="">
+              
+            <div class="form-group">
+              <label for="inputEmail3" class="col-sm-4 control-label">是否开启</label>
+              <div class="col-sm-8">
+                <select class="form-control" required name="types">
+                  <option value="1">开启</option>
+                  <option value="2">关闭</option>
+                </select>
+              </div>
+            </div>
+    
+            <div class="form-group margin-top-20">
+                <div class="col-sm-offset-4 col-sm-10">
+                  <button type="submit" class="btn btn-primary js-ajax-submit">立即提交</button>
+                </div>
+              </div>
+    
+              
+        </form>
+        
+    </div>
+
+</div>
+<include file="public/scripts"/>
+<script src="__PLUGIN_TMPL__/public/assets/layui/layui.all.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+
+function add(){
+    layer.open({
+        title:"添加类型",
+        scrollbar:false,
+        type:1,
+        area:['600px','500px'],
+        content: $('#add')
+    })
+}
+
+
+
+//上传图片
+function photo(_this){
+  var data = $(_this).val();
+ 
+  let file = _this.files[0];
+  data = new FormData();
+  data.append('photo', file);
+
+  $.ajax({
+        type: "post",
+        url: "{:cmf_plugin_url('Fund://admin_index/add_photo')}",
+        data: data,
+        dataType: "json",
+        processData: false,
+        contentType: false,
+        cache: false,
+        success: function (data) {
+
+          $(".tupain").val(data.data);
+          $('.logoimg').attr('src',"__ROOT__"+data.data);
+        },
+        error: function (data) {
+          alert("图片上传失败");
+        }
+      });
+  
+   
+}
+
+
+
+
+
+
+
+
+
+ //修改接收状态
+function edit(id){
+    $("#tid").val(id);
+  
+    $.ajax({
+        url: "{:cmf_plugin_url('Fund://admin_index/fundtype')}?id="+id,
+        success:function(data){
+           
+        var obj=$('.editForm').find("select[name=types]").get(0);
+         for(var i = 0; i < obj.options.length; i++){
+        var tmp = obj.options[i].value;
+        if(tmp == data){
+            obj.options[i].selected = 'selected';
+            break;
+        }
+        }
+        }
+    })
+
+    layer.open({
+        title:"修改状态",
+        scrollbar:false,
+        type:1,
+        area:['400px','300px'],
+        content: $('#edit')
+    })
+}
+</script>
+</body>
+</html>

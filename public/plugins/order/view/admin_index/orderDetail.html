@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>订单详情</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+  </style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+  <table class="table table-bordered table-hover" style="text-align: center;margin-top:20px">
+    <tr>
+      <td>订单编号</td>
+      <td>
+        {$order.ordersn}
+      </td>
+    </tr>
+    <tr>
+      <td>下单时间</td>
+      <td>
+        {$order.addtime}
+      </td>
+    </tr>
+    <tr>
+      <td>支付时间</td>
+      <td>
+        {$order.paytime}
+      </td>
+    </tr>
+    <tr>
+      <td>发货时间</td>
+      <td>
+        {$order.fhtime}
+      </td>
+    </tr>
+    <tr>
+      <td>收货时间</td>
+      <td>
+        {$order.shouhuo_time}
+      </td>
+    </tr>
+    <tr>
+      <td style="width:100px">买家留言</td>
+      <td>
+        {$order.usernote}
+      </td>
+    </tr>
+    <tr>
+      <td>店铺名称</td>
+      <td>
+        {$order.dianpu_name}
+      </td>
+    </tr>
+    <tr>
+      <td>用户昵称</td>
+      <td>
+        {$order.user_name}
+      </td>
+    </tr>
+    <tr>
+      <td>是否评价</td>
+      <td>
+        <switch name="$order.is_pingjia">
+          <case value="1">是</case>
+          <case value="0">否</case>
+        </switch>
+      </td>
+    </tr>
+  </table>
+
+</div>
+</body>
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+
+</script>
+</html>

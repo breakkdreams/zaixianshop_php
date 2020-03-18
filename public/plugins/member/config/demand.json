@@ -1,0 +1,1 @@
+{"notice_one":{"name":"会员模块","symbol":"member","demandName":"消息推送","demandSymbol":"notice","api":"plugins\/notice\/apiIndex\/verifySms","explain":"验证短信是否正确","remark":""},"notice_two":{"name":"会员模块","symbol":"member","demandName":"消息推送","demandSymbol":"notice","api":"plugins\/notice\/apiIndex\/cleanCode","explain":"验证成功自动清空","remark":""}}

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>编辑</title>
+    <link href="__PLUGIN_TMPL__/public/assets/layui/css/layui.css" rel="stylesheet" type="text/css">
+    <link href="__PLUGIN_TMPL__/public/assets/layui/css/backend.min.css" rel="stylesheet" type="text/css">
+    <include file='public/head'>
+        <style>
+            table th, table td{text-align: center;}
+            .ml-10 { margin-left: 10px; }
+			.layui-icon{font-size: 14px !important;}
+			.layui-form-label{ width: auto;}
+			.layui-btn.layui-btn-sm .fa{ font-size: 14px !important;}
+			.mr4{ margin-right: 4px;}
+			.layui-form-item{ margin-bottom: 0px;}
+			.row{ margin: 0 !important;}
+			.form-horizontal .form-group { margin: 0 0 15px 0}
+        </style>
+</head>
+<body>
+    <div id="main" role="main">
+        <div class="tab-content tab-addtabs">
+			<div id="content">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<div class="content">
+							<form id="edit-form" class="form-horizontal nice-validator n-default n-bootstrap">
+								<h2></h2>
+								<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">商品分类名称:</label>
+									<div class="col-xs-12 col-sm-8">
+										<input class="form-control" name="name" type="text" value="" required="required">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">所属栏目:</label>
+								    <div class="col-xs-12 col-sm-8">
+								        <select name="cpid" id="cpid" lay-verify="required" class="form-control">
+									        <option value="0">顶级栏目</option>
+									        
+									        <volist name="cateRes" id="cate">
+                                            <option value="{$cate.catid}"  <if condition="$cate['level'] gt 1">disabled="disabled"</if>  ><?php echo str_repeat('-', $cate['level']*8);?>{$cate.catname}</option>
+                                        	</volist>
+ 
+								        </select>
+								    </div>
+								</div>
+								
+
+								<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">栏目图标:</label>
+									<div class="col-xs-12 col-sm-8">
+										<div class="input-group">
+											<input id="image_info" name="image" type="hidden" value="">
+											<div class="input-group-addon no-border no-padding">
+												<span style="position: relative;">
+													<button type="button" class="btn btn-danger plupload" style="position: relative; z-index: 1;" id="image_upload"><i class="fa fa-upload"></i> 上传文件</button>
+												</span>
+												
+											</div>
+											<span class="msg-box n-right"></span>
+										</div>
+										<ul class="row list-inline plupload-preview" id="image_list"></ul>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">是否推荐</label>
+									<div class="col-xs-12 col-sm-8">
+										<div class="radio">
+											<label for="row[status]-normal"><input id="row[status]-normal" checked="checked" name="type" type="radio" value="1"> 是</label> 
+											<label for="row[status]-hidden"><input id="row[status]-hidden" name="type" type="radio" value="0"> 否</label>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">显示/隐藏</label>
+									<div class="col-xs-12 col-sm-8">
+										<div class="radio">
+											<label for="row[status]-normals"><input id="row[status]-normals" checked="checked" name="status" type="radio" value="1"> 显示</label> 
+											<label for="row[status]-hiddens"><input id="row[status]-hiddens" name="status" type="radio" value="0"> 隐藏</label>
+										</div>
+									</div>
+								</div>
+
+								
+								
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    
+	<script src="__PLUGIN_TMPL__/public/assets/layui/layui.all.js"></script>
+	<include file='public/scripts'>
+
+	<script>
+	$(function(){
+		;!function(){
+			var layer = layui.layer
+			,form = layui.form
+			,$ = layui.jquery
+		    ,upload = layui.upload;
+
+			$('.plupload-preview').on('click','.btn-trash',function(){
+				$('#image_list li').remove();
+				$('#image_info').val('');
+			})
+			  //普通图片上传
+			upload.render({
+				elem: '#image_upload'
+				,url: "{:cmf_plugin_url('Goods://goodscats/uploadimg')}"
+				,before: function(obj){
+					  //预读本地文件示例，不支持ie8
+					obj.preview(function(index, file, result){
+						$('#image_list').append('<li class="col-xs-3"><a href="" data-url="#" target="_blank" class="thumbnail"><img src="'+result+'" class="img-responsive"></a><a href="javascrispt:;" class="btn btn-danger btn-xs btn-trash"><i class="fa fa-trash"></i></a></li>')
+					});
+				}
+				,done: function(res){
+				    //console.log(res);
+				     $('#image_info').val(res.data.src);
+				}
+				,error: function(){
+					layer.msg('上传失败');
+				}
+			});
+			
+			//多图片上传
+		    upload.render({
+				elem: '#images_upload'
+				,url: ''
+				,multiple: true
+				,before: function(obj){
+				  //预读本地文件示例，不支持ie8
+				  obj.preview(function(index, file, result){
+					  $('#images_list').append('<li class="col-xs-3"><a href="" data-url="#" target="_blank" class="thumbnail"><img src="'+result+'" alt="'+ file.name +'" class="img-responsive"></a><a href="javascrispt:;" class="btn btn-danger btn-xs btn-trash"><i class="fa fa-trash"></i></a></li>')
+				  });
+				}
+				,done: function(res){
+				  //上传完毕
+				}
+		    });
+		}();
+	})
+	</script>
+</body>
+</html>
+

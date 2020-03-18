@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<include file="public/head"/>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<title>添加客服消息</title>
+	<link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+	<style type="text/css">
+	a{color:#18BC9C;}
+	</style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+	<ul class="nav nav-tabs">
+        <li><a href="javascript:history.go(-1)">返回</a></li>
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/notice/common_manage/sendPage')">
+            <li class="active"><a href="{:cmf_plugin_url('Notice://common_manage/sendPage')}">添加消息</a></li>
+        </if>
+    </ul>
+
+    <form class="form-horizontal js-ajax-form margin-top-20" role="form" method="post">
+
+        <div class="form-group">
+            <label for="input-link_id" class="col-sm-2 control-label">发送到</label>
+            <div class="col-md-6 col-sm-10">
+                <select class="form-control" name="user" required="required">
+                    <option value="">请选择人员</option>
+                    <foreach name="$member" item="vo">
+                        <option value="{$vo.wechatpe_openid}|{$vo.uid}|{$vo.nickname}">{$vo.nickname}</option>
+                    </foreach>
+                </select>
+                <span style="color:red;margin-top:10px">备注：用户和公众号需在48小时内产生互动，否则无法发送消息（由于微信内部有免骚扰机制，互动之后可连续发送20条消息，20条消息之后需要再次触发互动）</span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label"><span class="form-required">*</span>类型</label>
+            <div class="col-md-6 col-sm-10">
+                <select name="type" class="form-control" onchange="xuanze(this)">
+                    <option value="text">文本</option>
+                    <option value="image">图片</option>
+                </select>
+            </div>
+        </div>
+        <div lass="form-group" id="wbnr" style="display:none">
+            <label class="col-sm-2 control-label"></label>
+            <div class="col-md-6 col-sm-10">
+                <input id="avatar_info" name="tupian" type="hidden" value="">
+                <button type="button" class="btn btn-danger avataruplod" style="position: relative; z-index: 1;" id="avatar_lod"><i class="fa fa-upload"></i> 上传文件</button>
+
+                <ul class="row list-inline avataruplod-preview" id="img_list" style="margin-top:5px">
+                
+                </ul>
+            </div>
+            <span class="msg-box n-right"></span>
+        </div>
+        
+        <div class="form-group" id="neirong">
+            <label for="input-link_description" class="col-sm-2 control-label"><span class="form-required">*</span>内容</label>
+            <div class="col-md-6 col-sm-10">
+                <textarea class="form-control valid" id="input-link_description" name="content" placeholder="消息内容" style="height: 80px;"></textarea>
+            </div>
+        </div>
+
+        
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-success js-ajax-submit" data-action="{:cmf_plugin_url('Notice://common_manage/kfsms')}">发送</button>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+</body>
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+
+$(function(){
+    layui.use('upload', function(){
+      var upload = layui.upload;
+       
+        upload.render({
+            elem: '#avatar_lod'
+            ,url: "{:cmf_plugin_url('Notice://common_manage/pzUpload')}"
+            ,before: function(obj){
+
+            //预读本地文件示例，不支持ie8
+            obj.preview(function(index, file, result){
+            $('#img_list').html('<li class="col-xs-2"><a href="" data-url="#" target="_blank" class="thumbnail"><img src="'+result+'" class="img-responsive"></a></li>')
+            });
+            }
+            ,done: function(res){
+            $('#avatar_info').val(res.url);
+            }
+            ,error: function(){
+            layer.msg('上传失败');
+            }
+        });
+    });
+})
+
+
+
+
+
+
+
+//选择消息类型
+function xuanze(_this){
+    var type = $(_this).val();
+
+    if (type=='text') {
+        $('#neirong').show();
+        $('#wbnr').hide();
+    } else if (type=='image') {
+        $('#wbnr').show();
+        $('#neirong').hide();
+    }
+}  
+
+</script>
+</html>

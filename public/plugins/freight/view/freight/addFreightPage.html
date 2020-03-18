@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>运费模板</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        .freight_ipt{
+            width: 50px;
+            text-align: center;
+            border:none;border-bottom:1px solid #ddd;
+        }
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+    <include file='public/head'>
+</head>
+<body>
+    <div class="wrap js-check-wrap" id="addFormJt">
+        <div id="app" v-cloak>
+            <table class="table table-bordered table-hover"  style="text-align:center;">
+                <tr>
+                    <td class="td-head">运费模板名称</td>
+                    <td class="td-body">
+                        <input type="text" class="form-control" required name="title" maxlength="20" v-model="title" placeholder="输入2-20位的运费模板名称">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-head">计费规则</td>
+                    <td class="td-body" style="text-align: left;">
+                        <input type="radio" name="type" value="1" v-model="ji_type" @click="change_type(1)"> 包邮
+                        <input type="radio" name="type" value="2" v-model="ji_type" @click="change_type(2)"> 按件数
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-head">运送方式</td>
+                    <td class="td-body" style="text-align: left;">
+                        除指定地区外,其余地区采用默认运费
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-body" style="text-align: center;" colspan="2" v-if="ji_type == 1">
+                        满足<input type="number" class="freight_ipt" v-model="free_shipping" >件包邮,
+                        否则运费<input type="number" class="freight_ipt" v-model="default_num" >件内,
+                        <input type="number" class="freight_ipt"  v-model="default_price">元,
+                        每增加<input type="number" class="freight_ipt" v-model="continue_num">件,
+                        增加运费<input type="number" class="freight_ipt" v-model="continue_price">元
+                    </td>
+
+                    <td class="td-body" style="text-align: center;" colspan="2" v-else>
+                        默认运费<input type="number" class="freight_ipt" min="1" v-model="default_num">件内,
+                        <input type="number" class="freight_ipt" min="0" v-model="default_price">元,
+                        每增加<input type="number" class="freight_ipt" min="1" v-model="continue_num">件,
+                        增加运费<input type="number" class="freight_ipt" min="0" v-model="continue_price">元
+                    </td>
+                </tr>
+            </table>
+
+                <table class="table table-bordered table-hover"  style="text-align:center;">
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>运送到</th>
+                            <th>首件</th>
+                            <th>首费</th>
+                            <th>续件</th>
+                            <th>续费</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in line_num">
+                            <td>{{item.id}}</td>
+                            <td >
+                                <el-cascader
+                                    ref="myCascader"
+                                    :options="options"
+                                    :props="props"
+                                    :show-all-levels="false"
+                                    v-model="item.area"
+                                    collapse-tags>
+                                </el-cascader>
+                            </td>
+                            <td><input type="number" class="freight_ipt" min="1" v-model="item.first_num"></td>
+                            <td><input type="number" class="freight_ipt" min="0" v-model="item.first_price"></td>
+                            <td><input type="number" class="freight_ipt" min="1" v-model="item.continue_num"></td>
+                            <td><input type="number" class="freight_ipt" min="0" v-model="item.continue_price"></td>
+                            <td>
+                                <div @click="deleteItem(index)" style="padding-top: 5px;padding-bottom: 5px;border: solid 1px #999" v-if="index!=0">删除</div>
+                                <div @click="add" style="padding-top: 5px;padding-bottom: 5px;border: solid 1px #999" v-if="index==0">添加</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="float: right">
+                    <button style="background-color: #2e8ded;color: white;border: #2e8ded;padding: 5px 10px" @click="sub_form">提交</button>
+                    <button style="background-color: #F1F1F2;border: #F1F1F2;padding: 5px 10px;margin-left: 10px;" @click="close_form">关闭</button>
+                </div>
+
+            </div>
+    </div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layer/layer.js"></script>
+
+
+
+<script type="text/javascript">
+    let app = new Vue({
+        el: '#app',
+        data() {
+            return {
+                title:'',//模板标题
+                ji_type:'',//计费类型
+                default_num:'',//默认首件
+                default_price:'',//默认首费
+                continue_num:'',//续件
+                continue_price:'',//续费
+                free_shipping:'',//满足多少包邮
+                line_num: [
+                    {id:'1',area:[],first_num:'',first_price:'',continue_num:'',continue_price:'' },
+                ],
+                props: { multiple: true},
+                options: []
+            }
+        },
+        created() {
+            this.init();
+        },
+        methods: {
+            init(){
+                let that = this;
+                let add_url = "{:cmf_plugin_url('Freight://freight/getSubord')}";
+                $.ajax({
+                    url: add_url,
+                    data: {},
+                    dataType: "json",
+                    type: "post",
+                    success: function(res) {
+                        console.log(res.data);
+                        that.options = res.data;
+                    }
+                });
+            },
+            maxTagPlaceholder (num) {
+                return 'more '+ num;
+            },
+            //添加行数
+            add() {
+                this.line_num.push({ id:this.line_num.length+1,area:[],first_num:'',first_price:'',continue_num:'',continue_price:'' })
+            },
+            //删除新增的行数
+            deleteItem(index) {
+                let that = this;
+                that.line_num.splice(index, 1)
+            },
+            //提交弹窗
+            sub_form(){
+                let title = this.title;
+                let ji_type = this.ji_type;
+                let default_num = this.default_num;
+                let default_price = this.default_price;
+                let continue_num = this.continue_num;
+                let continue_price = this.continue_price;
+                let free_shipping = this.free_shipping;
+                let line_num = this.line_num;
+                if(title == '' || ji_type == '' || default_num == '' || default_price == '' || continue_num == '' ||
+                    continue_price == '' || free_shipping == '' || line_num == ''){
+                    alert('请将参数填写完整');
+                    return false;
+                }
+                let add_url = "{:cmf_plugin_url('Freight://freight/addFreight')}";
+                $.ajax({
+                    url: add_url,
+                    data: {
+                        'title':title,
+                        'type':ji_type,
+                        'default_num':default_num,
+                        'default_price':default_price,
+                        'continue_num':continue_num,
+                        'continue_price':continue_price,
+                        'free_shipping':free_shipping,
+                        'freight_item':line_num,
+                    },
+                    dataType: "json",
+                    type: "post",
+                    success: function(res) {
+                        console.log(res);
+                        if(res.code='200'){
+                            let index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                            parent.location.reload();
+                        }else{
+                            alert(res.message);
+                        }
+
+                    }
+                });
+            },
+            //关闭弹窗
+            close_form(){
+                let index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);
+                parent.location.reload();
+            },
+            //更改计费规则
+            change_type(num){
+                let that = this;
+            }
+        },
+
+    });
+
+    function changeType(num) {
+
+    }
+
+
+    /**
+     * 获取窗口中的元素，然后返回给父级
+     * @return {[type]} [description]
+     */
+    function callbackdata(){
+        var arr = '';
+        // $("input[name=ceshi]").each(function(){
+        //     arr = $(this).val()+','+arr;
+        // })
+        // console.log(arr);
+
+
+        return '1'
+    }    
+</script>
+
+</body>
+</html>

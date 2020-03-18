@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>发货</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+  </style>
+</head>
+<body>
+  <div class="wrap js-check-wrap">
+
+<form name="myform" id="myform" action="{:cmf_plugin_url('Order://admin_index/orderManageDdfh')}" method="post">
+    <input type="hidden" name="id" value="{$orderid}">
+      <p style="font-size:25px">物流单号信息</p>
+      <table  class="table table-bordered table-hover" style="text-align: center;margin-top:20px">
+        <tr>
+          <td width="200">快递公司</td>
+          <td>
+            <select name="shippercode" style="width:220px" class="form-control">
+                <option value="">-请选择快递公司-</option>
+                <foreach name="$infok" item="vx">
+                    <option value="{$vx.code}" label="{$vx.company}"></option>
+                </foreach>
+            </select>
+          </td>
+          <tr>
+            <td>快递单号</td>
+            <td>
+              <input type="text" class="form-control" name="logistics_order" style="width:220px">
+            </td>
+          </tr>
+        </tr>
+      </table>
+</form>
+
+
+    
+
+</div>
+</body>
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>会员管理</title>
+    <include file='public/head'>
+</head>
+<body>
+    <div class="wrap js-check-wrap" id="addFormJt">
+
+        <form method="POST" class="js-ajax-form" id="da" action="">
+            <input type="text" class="form-control hidden" name="uid" value="{$data.uid}" />
+            <table class="table table-bordered table-hover"  style="text-align:center;">
+            <tr>
+                <td class="td-head" >用户ID</td>
+                <td class="td-body">
+                    <input type="text" class="form-control"  name="uid" disabled="disabled" value="{$data.uid}" >
+                </td>
+                <td class="td-head" >用户名</td>
+                <td class="td-body">
+                    <input type="text" class="form-control"  name="username" placeholder="随机生成"  disabled="disabled" value="{$data.username}" >
+                </td>
+            </tr>
+            <tr>
+                <td class="td-head">密码</td>
+                <td class="td-body">
+                    <input type="password" class="form-control"  name="password" placeholder="不修改密码请留空">
+                </td>
+                <td class="td-head">确认密码</td>
+                <td class="td-body">
+                    <input type="password" class="form-control"  name="re_password" placeholder="不修改密码请留空">
+                </td>
+            </tr>
+            <tr>
+                <td class="td-head" >头像</td>
+                <td class="td-body">   
+                    <img src="{$data.avatar | default='__PLUGIN_TMPL__/public/image/nophoto.gif'}">
+                    <input type="checkbox" name="del_avatar" lay-skin="primary"> 删除头像
+                </td>
+                <td class="td-head" >昵称</td>
+                <td class="td-body">
+                    <input type="text" class="form-control" required name="nickname" maxlength="20"  placeholder="输入2-20位的昵称" value="{$data.nickname}">
+                </td>
+            </tr>
+
+            <tr>
+                <td class="td-head">手机号</td>
+                <td class="td-body">
+                    <input type="text" class="form-control" required name="mobile"  oninput = "value=value.replace(/[^\d]/g,'')" maxlength="15" value="{$data.mobile}" placeholder="请输入手机号">
+                </td>
+                <td class="td-head">邮箱</td>
+                <td class="td-body">
+                    <input type="text" class="form-control" required name="email" placeholder="请输入邮箱" value="{$data.email}" >
+                </td>
+            </tr>
+            <tr>
+                <td class="td-head">vip会员</td>
+                <td class="td-body">
+                    是否为VIP会员：
+                    <input type="checkbox" name="vip" lay-skin="primary" <?php if(isset($data['vip']) && $data['vip']==1){echo "checked";}  ?> >
+                </td>
+                <td class="td-head">vip过期时间</td>
+                <td class="td-body">
+                    <input type="text" autocomplete="off" class="js-bootstrap-datetime form-control" name="overduedate" value="{:date('Y-m-d H:i:s',$data.overduedate)}" placeholder="过期时间" >
+                </td>
+            </tr>
+            <tr>
+                <td class="td-head">会员组</td>
+                <td class="td-body">
+                    <select type="text" name="groupid" class="form-control">
+                        <volist name="member_group" id="group">
+                            <option value="{$group.groupid}" <if $data.groupid==$group.groupid>selected</if>>{$group.name}</option>
+                        </volist>
+                    </select>
+                </td>
+                <td class="td-head">状态</td>
+                <td class="td-body">
+                    <select type="text" name="islock" class="form-control">
+                        <option value="1" <?php if($data['islock']==1){echo 'selected';}  ?> >正常</option>
+                        <option value="2" <?php if($data['islock']==2){echo 'selected';}  ?> >禁用</option>
+                    </select>
+                </td>
+            </tr>
+
+        </table>
+            <div style="text-align:center;">
+                <!-- <button type="submit" class="btn btn-success js-ajax-submit" name="on" >提交</button> -->
+                <!-- 测试的时候js-ajax-submit从class里取出来 -->
+            </div>
+        </form>
+    </div>
+
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layer/layer.js"></script>
+
+
+<script type="text/javascript">
+
+    /**
+     * 获取窗口中的元素，然后返回给父级
+     * @return {[type]} [description]
+     */
+    function callbackdata(){
+        var arr = '';
+        // $("input[name=ceshi]").each(function(){
+        //     arr = $(this).val()+','+arr;
+        // })
+        // console.log(arr);
+
+
+        return '1'
+    }    
+</script>
+
+</body>
+</html>

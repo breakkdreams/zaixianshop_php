@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <include file="public/head"/>
+    <title>退款列表</title>
+</head>
+<body>
+<div class="wrap">
+	<ul class="nav nav-tabs">
+		<li><a href="{:cmf_plugin_url('Fund://admin_index/index')}">提现列表</a></li>
+        <li><a href="{:cmf_plugin_url('Fund://admin_index/recharge')}">充值列表</a></li>
+        <li><a href="{:cmf_plugin_url('Fund://admin_index/payment')}">支付列表</a></li>
+        <li  class="active"><a href="{:cmf_plugin_url('Fund://admin_index/refundmManagement')}">退款列表</a></li>
+        <li><a href="{:cmf_plugin_url('Fund://admin_index/accountList')}">用户账户列表</a></li>
+        <li><a href="{:cmf_plugin_url('Fund://admin_index/zftype')}">支付类型</a></li>
+		<li><a href="{:cmf_plugin_url('Fund://admin_index/banklist')}">银行信息</a></li>
+		<li><a href="{:cmf_plugin_url('Fund://payment/index')}">配置管理</a></li>
+    </ul>
+
+
+    
+    <form class="well form-inline margin-top-20" method="post" action="{:cmf_plugin_url('Fund://admin_index/refundmManagement')}">
+    	<select name="type" class="form-control">
+            <option value="0"  <?php if(isset($search['type']) && $search['type']==0){echo 'selected';} ?>>请选择</option>
+			<option value="1"  <?php if(isset($search['type']) && $search['type']==1){echo 'selected';} ?>>支付单号</option>
+			<option value="2"  <?php if(isset($search['type']) && $search['type']==2){echo 'selected';} ?>>用户手机</option>
+		</select>
+		<input type="text" value="{$search['category']|default=''}" class="form-control" name="category">
+		订单时间
+		<input type="text" class="form-control js-datetime" autocomplete="off" name="add_time" value="{$search['add_time']|default=''}" placeholder="开始时间">
+        <input type="text" class="form-control js-datetime" autocomplete="off" name="end_time" value="{$search['end_time']|default=''}" placeholder="结束时间">
+        <input type="submit" value="搜索" class="btn btn-success">
+    </form>
+   
+
+    
+    <form method="post" class="js-ajax-form" action="{:cmf_plugin_url('Fund://admin_index/delpayall')}">
+
+        <button type="submit" class="btn btn-success js-ajax-submit"
+                   onclick="return confirm('确定删除')" style="padding:0 18px;" >批量删除</button>
+    
+       <table class="table table-hover table-bordered" style="margin-top:20px">
+           <thead>
+               <tr>
+                   <th width="35" align="center">
+                    <input type="checkbox" value="" id="check_box_all" >
+                </th>
+                <th align="center">退款单号</th>
+                <th align="center">退款用户</th>
+                <th align="center">手机号</th>
+                <th align="center">退款至</th>
+                <th align="center">退款金额</th>
+                <th align="center">退款类型</th>
+                <th align="center">状态</th>
+                <th align="center">时间</th>
+                <th align="center">操作</th>
+               </tr>
+        </thead>
+        <tbody>
+            <volist name="da" id="vo">
+               <tr>
+                <td align="center" width="35">
+                        <input type="checkbox" class="check_box" name="id[]" value="{$vo['id']}">
+                </td>
+                <td align="center">{$vo['trade_sn']}</td>
+                <td align="center">{$vo['userName']}</td>
+                <td align="center">{$vo['phone']}</td>
+                <td align="center">
+                <switch name="$vo['status']">
+                  <case 1>余额</case>
+                </switch>
+                </td>
+                <td align="center">{$vo['refund_money']}</td>
+                <td align="center">{$vo['type']}</td>
+                <td align="center"><switch name="$vo['stat']">
+                        <case value="1"><span style="color:#55acee;">提交订单</span></case>
+                        <case value="2"><span style="color:#1cbb9b;">支付成功</span></case>
+                        <case value="3"><span style="color:#f40;">支付失败</span></case>
+                </switch></td>
+                <td align="center">{:date('Y-m-d H:i:s',$vo['refund_time'])}</td>
+                <td align="center"><a class="btn btn-danger btn-sm js-ajax-delete" data-msg="确定删除此条订单？" href="{:cmf_plugin_url('Fund://admin_index/refundDel')}?id={$vo['id']}">删除</a></td>
+             </tr> 
+            </volist>
+             
+           
+        </tbody>	
+        </table>
+       
+    
+        <div class="pagination">{$page}</div>
+    </form>	
+    
+
+</div>
+
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+    //全选/取消
+    $('#check_box_all').on('click',function(){
+         $('.check_box').prop('checked',$('#check_box_all').prop('checked'));
+    }); 
+ </script>
+</body>
+</html>

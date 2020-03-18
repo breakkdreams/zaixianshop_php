@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>添加评价</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+  </style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+<form name="myform" id="myform">
+  <p style="font-size: 25px;">添加评价</p>
+  <table class="table table-bordered table-hover" style="text-align: center;margin-top:20px">
+
+    <tr>
+      <td>内容</td>
+      <td>
+        <textarea class="form-control" name="comment"></textarea>
+      </td>
+    </tr>
+    <tr>
+      <td style="width:100px">评价图片</td>
+      <td>
+        <div class="col-xs-12 col-sm-8">
+          <div class="input-group">
+            <input id="image_info" name="thumb" type="hidden" value="">
+            <div class="input-group-addon no-border no-padding six-hide">
+              <span style="position: relative;">
+                <button type="button" class="btn btn-danger plupload" style="position: relative; z-index: 1;" id="image_upload"><i class="fa fa-upload"></i> 上传文件</button>
+              </span>
+              
+            </div>
+            <span class="msg-box n-right"></span>
+          </div>
+          <ul style="width:640px" class="row list-inline plupload-preview" id="image_list">
+
+          </ul>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td>评价时间</td>
+      <td>
+        <input type="text" name="time" class="js-datetime form-control" required="" autocomplete="off">
+      </td>
+    </tr>
+    <tr>
+      <td>昵称</td>
+      <td>
+        <input type="text" name="nickname" class="form-control" required="">
+      </td>
+    </tr>
+    <tr>
+      <td>头像</td>
+      <td>
+        <div class="col-xs-12 col-sm-8">
+          <div class="input-group">
+            <input id="avatar_info" name="avatar" type="hidden" value="">
+            <div class="input-group-addon no-border no-padding ">
+              <span style="position: relative;">
+                <button type="button" class="btn btn-danger avataruplod" style="position: relative; z-index: 1;" id="avatar_lod"><i class="fa fa-upload"></i> 上传文件</button>
+              </span>
+              
+            </div>
+            <span class="msg-box n-right"></span>
+          </div>
+          <ul style="width:640px" class="row list-inline avataruplod-preview" id="img_list">
+
+          </ul>
+        </div>
+      </td>
+    </tr>
+  </table>
+</form>
+
+</div>
+</body>
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+
+$(function(){
+  ;!function(){
+    var layer = layui.layer
+    ,form = layui.form
+    ,$ = layui.jquery
+    ,upload = layui.upload;
+    var url = '';
+    var sum = 1;
+    $('.plupload-preview').on('click','.btn-trash',function(){
+      $('#image_list li').remove();
+      $('#image_info').val('');
+      url = '';
+      $('.six-hide').show();
+    })
+
+    $('.avataruplod-preview').on('click','.btn-trash',function(){
+      $('#img_list li').remove();
+      $('#avatar_info').val('');
+    })
+    
+      //普通图片上传
+    upload.render({
+      elem: '#image_upload'
+      ,url: "{:cmf_plugin_url('Evaluation://admin_index/pzUpload')}"
+      ,before: function(obj){
+
+        if (sum==6) {
+          $('.six-hide').hide();
+        }
+
+          //预读本地文件示例，不支持ie8
+        obj.preview(function(index, file, result){
+          $('#image_list').append('<li class="col-xs-2"><a href="" data-url="#" target="_blank" class="thumbnail"><img src="'+result+'" class="img-responsive"></a><a href="javascript:;" class="btn btn-danger btn-xs btn-trash"><i class="fa fa-trash"></i></a></li>')
+        });
+      }
+      ,done: function(res){
+
+          url += res.url+',';
+          sum += 1;
+
+          $('#image_info').val(url);
+      }
+      ,error: function(){
+        layer.msg('上传失败');
+      }
+    });
+
+
+    upload.render({
+      elem: '#avatar_lod'
+      ,url: "{:cmf_plugin_url('Evaluation://admin_index/pzUpload')}"
+      ,before: function(obj){
+
+          //预读本地文件示例，不支持ie8
+        obj.preview(function(index, file, result){
+          $('#img_list').html('<li class="col-xs-2"><a href="" data-url="#" target="_blank" class="thumbnail"><img src="'+result+'" class="img-responsive"></a><a href="javascript:;" class="btn btn-danger btn-xs btn-trash"><i class="fa fa-trash"></i></a></li>')
+        });
+      }
+      ,done: function(res){
+          $('#avatar_info').val(res.url);
+      }
+      ,error: function(){
+        layer.msg('上传失败');
+      }
+    });
+    
+
+  }();
+})
+
+
+</script>
+</html>

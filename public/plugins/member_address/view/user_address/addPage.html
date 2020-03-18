@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>编辑</title>
+    <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+    <!-- import CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <include file='public/head'>
+        <style>
+            table th, table td{text-align: center;}
+            .ml-10 { margin-left: 10px; }
+			.layui-icon{font-size: 14px !important;}
+			.layui-form-label{ width: auto;}
+			.layui-btn.layui-btn-sm .fa{ font-size: 14px !important;}
+			.mr4{ margin-right: 4px;}
+			.layui-form-item{ margin-bottom: 0px;}
+			.row{ margin: 0 !important;}
+			.form-horizontal .form-group { margin: 0 0 15px 0}
+        </style>
+
+</head>
+<body>
+<form method="POST" class="js-ajax-form" id="da" action="{:cmf_plugin_url('Member://admin_index/add')}">
+        <table class="table table-bordered table-hover"  style="text-align:center;">
+            <!-- <input type="text" class="hidden"  name="cri_id"   value=""> -->
+            <tr >
+                <td class="td-head" style="width:20%;">用户uid</td>  
+                <td class="td-body" style="width:80%;">
+                    <input type="text" class="form-control" name="uid" value="" placeholder="请输入用户ID"   >
+                </td>
+            </tr>
+            <tr >
+                <td class="td-head" style="width:20%;">收件人名称</td>  
+                <td class="td-body" style="width:80%;">
+                    <input type="text" class="form-control" name="receive_name" value="" placeholder="请输入收件人名称"   >
+                </td>
+            </tr>
+            <tr>
+                <td class="td-head">收件人电话号码</td>
+                <td class="td-body">
+                    <input type="text" class="form-control"  name="receive_phone"  placeholder="请输入电话号码" oninput = "value=value.replace(/[^\d]/g,'')">
+                </td>
+            <tr>
+            <tr>
+                <td class="td-head">收件地区</td>
+                <td class="td-body"style="display:flex">
+                    <div id="app" >
+                        <div style="float:left">
+                            <el-cascader v-model="val" placeholder="点击" :options="options" filterable @change="handleItemChange"></el-cascader>
+                        </div>
+                        <div v-for="(i,index) in vals" class="hidden" >
+                            <input type="text" name="AAA"  class="form-control sort"   :id="i.value" :value='i.label' disabled="disabled" > 
+                            <!-- <a id="" :v-text="i.label" ></a> -->
+                            <!-- label:{{i.label}} - value{{i.value}} -->
+                        </div>
+                    </div>
+                </td>
+            <tr>
+            <tr>
+                <td class="td-head">收件详细地址</td>
+                <td class="td-body">
+                    <input type="text" class="form-control"  name="address"  placeholder="请输入收件详细地址">
+                </td>
+            <tr>
+            
+            <tr>    
+                <td class="td-head">邮政编码   </td>
+                <td class="td-body">
+                    <input type="text" class="form-control"  name="postal_code"  placeholder="请输入邮政编码" oninput = "value=value.replace(/[^\d]/g,'')">
+                </td>
+            <tr>
+            <tr>
+                <td class="td-head" >是否为默认收货地址:</td>  
+                <td class="td-body">
+                    <input type="text" class="form-control"  value="否" disabled="disabled"  >
+                </td>
+            </tr>
+        </table>
+    </form>
+	
+                                        
+			
+
+
+     
+<script src="__STATIC__/js/layui/layui.all.js" charset="utf-8"></script>
+<script src="__STATIC__/js/jquery.js" charset="utf-8"></script>
+<include file='public/scripts'>
+<!-- import Vue before Element -->
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+var data = {$data};
+console.log(data);
+var app = new Vue({
+    el: '#app',
+    data: {
+        vals:[],
+        val: [],
+        options:data
+        },
+    methods: {
+        handleItemChange() {
+            this.vals=getCascaderObj(this.val, this.options);
+            console.log(this.val);
+        },
+        chushi(){
+            this.val=["120000", "120100", "120116"];
+        }
+    },
+    mounted(){
+        // this.chushi();
+    }
+})
+
+</script>
+
+<script> 
+        function getCascaderObj(val,opt) {
+            // console.log(val);
+            // console.log(JSON.stringify(val));
+            // console.log('A');
+            // console.log(opt);
+            return val.map(function (value, index, array) {
+                for (var itm of opt) {
+                    if (itm.value == value) { opt = itm.children; return itm; }
+                }
+                return null;
+            });
+        }
+    </script>
+</body>
+</html>
+

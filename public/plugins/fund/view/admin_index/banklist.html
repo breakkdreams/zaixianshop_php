@@ -1,0 +1,269 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    
+    <include file="public/head"/>
+    <title>银行信息</title>
+
+</head>
+<body>
+<div class="wrap">
+	<ul class="nav nav-tabs">
+		<li><a href="{:cmf_plugin_url('Fund://admin_index/index')}" >提现列表</a></li>
+    <li><a href="{:cmf_plugin_url('Fund://admin_index/recharge')}">充值列表</a></li>
+    <li><a href="{:cmf_plugin_url('Fund://admin_index/payment')}">支付列表</a></li>
+    <li ><a href="{:cmf_plugin_url('Fund://admin_index/refundmManagement')}">退款列表</a></li>
+    <li><a href="{:cmf_plugin_url('Fund://admin_index/accountList')}">用户账户列表</a></li>
+    <li><a href="{:cmf_plugin_url('Fund://admin_index/zftype')}">支付类型</a></li>
+    <li class="active"><a href="#">银行信息</a></li> 
+		<li><a href="{:cmf_plugin_url('Fund://payment/index')}">配置管理</a></li>
+	</ul>
+  
+ 
+  <form class="well form-inline margin-top-20" method="post" action="{:cmf_plugin_url('Fund://admin_index/banklist')}">
+    <select name="types" class="form-control">
+      <option value="1" <?php if(isset($search['types']) && $search['types']==1){echo 'selected';} ?>>银行</option>
+      <option value="2" <?php if(isset($search['types']) && $search['types']==2){echo 'selected';} ?>>card_bin</option>
+      <option value="3" <?php if(isset($search['types']) && $search['types']==3){echo 'selected';} ?>>卡类</option>
+    </select>
+    <input type="text" value="{$search['category']|default=''}" class="form-control" name="category">
+    <input type="submit" value="搜索" class="btn btn-success">
+  </form>
+
+  <a class="btn btn-info" href="#" onclick="addbank();" style="margin-top: 20px">添加银行</a>
+
+
+<form method="post" class="js-ajax-form" action="{:cmf_plugin_url('Fund://admin_index/bank_delall')}">
+
+  <button type="submit" class="btn btn-success js-ajax-submit"
+               onclick="return confirm('确定删除')" style="padding:0 18px;margin-top: 20px" >批量删除</button>
+   <table class="table table-hover table-bordered" style="margin-top:20px">
+   	<thead>
+   		<tr>
+        <th width="35" align="center">
+          <input type="checkbox" value="" id="check_box_all" onclick="selectall();">
+        </th>
+        <th align="center">ID</th>
+        <th align="left" height="100">银行LOGO</th>
+        <th align="center">bin(卡号前2-8位))</th>
+        <th align="left">银行</th>
+        <th align="left">银行卡类</th>
+        <th align="center">银行卡种</th>
+        <th align="center">状态</th>
+        <th align="center">操作</th>
+   		</tr>
+   	</thead>
+   	<tbody>
+   		<volist name="data" id="vo">
+   		<tr>
+   			<td align="center" width="35">
+           <input type="checkbox" class="check_box" name="id[]" value="{$vo['id']}">
+        </td>
+        <td align="center">{$vo['id']}</td>
+        <td align="left" height="100"><if condition="$vo['thumb']=='/plugins/fund/view/public'">
+          <p>暂无图片</p>
+          <else />
+             <img src="__ROOT__/{$vo['thumb']}" style='height:60px;'>
+             </if>
+            </td>
+        <td align="center">{$vo['card_bin']}</td>
+        <td align="left">{$vo['bank']}</td>
+        <td align="left">{$vo['card_type']}</td>
+        <td align="center">{$vo['desc']}</td>
+        <td align="center">
+            <switch name="$vo['status']">
+              <case value="0"><p >开</p></case>
+              <case value="1"><p>关</p></case>
+            </switch>
+        </td>
+        <td align="center">
+            <a href="javascript:;" class="btn btn-info btn-sm"
+                onclick="edit({$vo['id']})">编辑</a>
+            <a href="{:cmf_plugin_url('Fund://admin_index/bank_del')}?id={$vo['id']}" class="btn btn-danger btn-sm js-ajax-delete" data-msg="您确定删除此条记录吗？">删除</a>
+        </td>
+   		</tr>
+   	    </volist>
+   	</tbody>    
+    
+   </table>
+   <div class="pagination">{$page}</div>
+</form>   
+ 
+
+<!-- 添加银行 -->
+ <div id="write"  class="wrap" style="display: none" >
+        <form method="post" enctype="multipart/form-data" id="FormData" class="js-ajax-form" action="{:cmf_plugin_url('Fund://admin_index/add_bank')}" style="width: 90%;margin-left: 5%;margin-top: 30px">
+            <table class="table table-hover table-bordered">
+               <tbody>
+                 <tr>
+                   <td align="center">银行</td>
+                   <td align="center"><input type="text"  class="form-control" value="" name="bank"></td>
+                 </tr>
+                 <tr>
+                   <td align="center">描述</td>
+                   <td align="center"><input type="text" class="form-control" value="" name="desc"></td>
+                 </tr>
+                 <tr >
+                  <td align="center">银行LOGO</td>
+                  <td align="center">
+                  <input type="hidden" class="tupain" name="thumb" value="">
+                  <label>
+                    <img src="__PLUGIN_TMPL__/public/assets/images/timg.png"  class="logoimg" style="height: 100px;">
+                    <input type="file" id="front" accept="image/png,image/jpeg,image/jpg" ref="inputer" onchange="photo(this)" style="position:absolute;opacity:0;">
+                  </label>       
+                  </td>
+                 </tr>
+                 <tr>
+                   <td align="center">是否显示</td>
+                   <td align="center">
+                      <div class="checkbox">
+                          <label>
+                              <input class="powerExp on"  name="powerExp" type="radio" value="0" />开
+                              <input style="margin-left: 20px"  class="powerExp off" name="powerExp" type="radio" value="1" />关
+                          
+                          </label>
+                      </div>
+                        
+                   </td>
+                 </tr>
+                
+               </tbody>
+            </table>
+
+            <button type="submit" class="btn btn-success js-ajax-submit" style="float: right;margin-top: 80px">提交</button>
+        </form>
+        
+    </div>  
+
+
+
+
+    <!-- 添加银行 -->
+ <div id="write2"  class="wrap" style="display: none" >
+        <form method="post" enctype="multipart/form-data" id="FormData" class="js-ajax-form" action="{:cmf_plugin_url('Fund://admin_index/up_bank')}" style="width: 90%;margin-left: 5%;margin-top: 30px">
+          <input name="id" id="id" type="hidden" value="">
+            <table class="table table-hover table-bordered">
+               <tbody>
+                 <tr>
+                   <td align="center">银行</td>
+                   <td align="center"><input type="text" id="bank" class="form-control" value="" name="bank"></td>
+                 </tr>
+                 <tr>
+                   <td align="center">描述</td>
+                   <td align="center"><input type="text" id="desc" class="form-control" value="" name="desc"></td>
+                 </tr>
+                 <tr >
+                   <td align="center">银行LOGO</td>
+                   <td align="center">
+                    <input type="hidden" id="tu" class="tupain" name="thumb" value="">
+                    <label>
+                      <img src="__PLUGIN_TMPL__/public/assets/images/timg.png" id="img" class="logoimg" style="height: 100px;">
+                      <input type="file" id="front" accept="image/png,image/jpeg,image/jpg" ref="inputer" onchange="photo(this)" style="position:absolute;opacity:0;">
+                    </label>       
+          
+                   </td>
+                 </tr>
+                 <tr>
+                   <td align="center">是否显示</td>
+                   <td align="center">
+                       <div class="p10">
+    
+                         <input class="powerExp on" id="radio0" name="powerExp" type="radio" value="0" /><label for="powerExp_on">开</label>
+                         <input style="margin-left: 20px" id="radio1" class="powerExp off" name="powerExp" type="radio" value="1" /><label for="powerExp_off">关</label>
+                        </div>
+                   </td>
+                 </tr>
+                
+               </tbody>
+            </table>
+
+            <button type="submit" class="btn btn-success js-ajax-submit" style="float: right;margin-top: 80px">提交</button>
+        </form>
+        
+    </div>
+
+</div>
+
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+  
+  function addbank(){
+    layer.open({
+      title:"添加银行",
+      type:1,
+      area:['700px','600px'],
+      content:$("#write").html()
+    })
+  }
+
+
+
+
+//上传图片
+function photo(_this){
+  var data = $(_this).val();
+  let file = _this.files[0];
+  data = new FormData();
+  data.append('photo', file);
+
+  $.ajax({
+        type: "post",
+        url: "{:cmf_plugin_url('Fund://admin_index/add_photo')}",
+        data: data,
+        dataType: "json",
+        processData: false,
+        contentType: false,
+        cache: false,
+        success: function (data) {
+
+          $(".tupain").val(data.data);
+          $('.logoimg').attr('src',"__ROOT__"+data.data);
+        },
+        error: function (data) {
+          alert("图片上传失败");
+        }
+      });
+  
+   
+}
+
+ 
+
+
+ function edit(id){
+    $("#id").val(id);
+      $.ajax({
+       type:"get",// get或者post
+       url:"{:cmf_plugin_url('Fund://admin_index/fund_bank')}",// 请求的url地
+       data:{id},
+       dataType:"json",
+       success:function(data){
+         console.log(data);
+         $("#bank").val(data['bank']);
+         $("#desc").val(data['desc']);
+         $("#tu").val(data['thumb']);
+         $("#img").attr('src',"__ROOT__"+data['thumb']);
+         $("#radio"+data['status']).attr('checked','checked');
+       }
+      });
+
+     layer.open({
+      title:"修改银行",
+      type:1,
+      area:['700px','600px'],
+      content:$("#write2"),
+      end: function () {
+            $("#write2").css('display','none');
+        }
+    })
+ }
+
+  
+
+
+</script>
+
+</body>
+</html>	

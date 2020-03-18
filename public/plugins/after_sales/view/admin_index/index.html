@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>售后列表</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+  </style>
+</head>
+<body>
+  <div class="wrap js-check-wrap">
+
+    <ul class="nav nav-tabs">
+         <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/admin_indexs/AdminIndex/index')">
+            <li class="active"><a href="{:cmf_plugin_url('AfterSales://admin_index/index')}">售后列表</a></li>
+        </if>
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/admin_indexs/AdminIndex/index')">
+            <li><a href="{:cmf_plugin_url('AfterSales://afterConfig/index')}">售后配置</a></li>
+        </if>
+    </ul>
+
+    <form class="well form-inline margin-top-20">
+      订单编号：
+      <input type="text" class="form-control" name="refund_ordersn" value="<?php if(isset($data['refund_ordersn'])){echo $data['refund_ordersn'];}?>" autocomplete="off">
+
+      下单时间：
+      <input type="text" class="form-control js-date" name="start_addtime" value="<?php if(isset($data['start_addtime']) && $data['start_addtime']!=''){echo $data['start_addtime'];}?>" autocomplete="off">
+      至
+      <input type="text" class="form-control js-date" name="end_addtime" value="<?php if(isset($data['end_addtime']) && $data['end_addtime']!=''){echo $data['end_addtime'];}?>" autocomplete="off">
+      <select class="form-control" name="status">
+        <option value="">全部状态</option>
+        <option value="1" <?php if(isset($data['status']) && $data['status']==1){echo 'selected';}?> >审核中</option>
+        <option value="2" <?php if(isset($data['status']) && $data['status']==2){echo 'selected';}?> >待退货</option>
+        <option value="3" <?php if(isset($data['status']) && $data['status']==3){echo 'selected';}?> >进行中</option>
+        <option value="4" <?php if(isset($data['status']) && $data['status']==4){echo 'selected';}?> >已完成</option>
+      </select>
+
+      <input type="submit" class="btn btn-primary " value="搜索">
+    </form>
+
+
+    <form name="myform" id="myform" class="js-ajax-form" action="{:cmf_plugin_url('AfterSales://admin_index/afterDel')}" method="post">
+        <table class="table table-hover table-bordered table-list" id="menus-table">
+            <thead>
+                <tr>
+                    <th>
+                        <label>
+                            <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                        </label>
+                    </th>
+                   <th class="text-center">ID</th>
+                   <th class="text-center">退款单号</th>
+                   <th class="text-center">联系人</th>
+                   <th class="text-center">联系电话</th>
+                   <th class="text-center">退款金额</th>
+                   <th class="text-center">退款理由</th>
+                   <th class="text-center" style="width:15%">退款留言</th>
+                   <th class="text-center">申请时间</th>
+                   <th class="text-center">凭证</th>
+                   <th class="text-center">状态</th>
+                   <th class="text-center">操作</th>
+
+                </tr>
+            </thead>
+              
+            <tbody>
+                <volist name="after" id="vo">
+                    
+                <tr>
+                    <td>
+                        <label>
+                            <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x"
+                                   name="id[]" value="{$vo.id}">
+                        </label>
+                    </td>
+                    <td class="text-center">{$vo.order_id}</td>
+                    <td class="text-center">{$vo.refund_ordersn}</td>
+                    <td class="text-center">{$vo.lx_name}</td>
+                    <td class="text-center">{$vo.lx_mobile}</td>
+                    <td class="text-center">{$vo.money}</td>
+                    <td class="text-center">{$vo.reason}</td>
+                    <td class="text-center">{$vo.remark}</td>
+                    <td class="text-center">{:date('Y-m-d H:i:s',$vo.time)}</td>
+                    <td class="text-center"><a href="javascript:;" onclick='lookproof({$vo.proof})'>查看凭证</a></td>
+                    <td class="text-center">
+                        <switch name="vo.status">
+                            <case value="1"><span style="color:orange">审核中</span></case>
+                            <case value="2"><span style="color:blue">待退货</span></case>
+                            <case value="3"><span>进行中</span></case>
+                        </switch>
+                        <switch name="vo.audit_status">
+                          <case value="2"><span style="color:red">已拒绝</span></case>
+                        </switch>
+
+                        <if condition="$vo.audit_status==1 && $vo.status==4">
+                          <span style="color:green">已完成</span>
+                        </if>
+
+                    </td>
+
+                    <td class="text-center">
+                        <switch name="vo.status">
+                            <case value="1">
+                              <a href="{:cmf_plugin_url('AfterSales://admin_index/tongguo')}?orderid={$vo.order_id}" class="btn btn-success btn-sm js-ajax-dialog-btn" data-msg="确认通过吗？">通过</a>
+                              <a href="javascroipt:;" onclick="refusecause({$vo.order_id})" class="btn btn-danger btn-sm">拒绝</a>
+                            </case>
+                            
+                            <case value="3">
+                              <a class="btn btn-default btn-sm" onclick="querenshouhuo({$vo.order_id})" href="javascript:;">确认收货</a>
+                              <a class="btn btn-primary btn-sm" onclick="lookwuliu({$vo.id})" href="javascript:;">物流信息</a>
+                            </case>
+                        </switch>
+                        <a class="btn btn-info btn-sm" href="javascript:;" onclick="view({$vo.id})">商品详情</a>
+                    </td>
+                </tr>
+                </volist>
+            </tbody> 
+        </table>
+        <div style="margin-left:10px">
+            <label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                全选/取消
+            </label>
+            <button style="margin-left:10px"  type="submit" class="btn btn-primary btn-sm js-ajax-submit" data-msg="确定要删除吗？">批量删除</button>
+        </div>
+        
+        <div class="pagination">{$page|default=''}</div>
+    </form>
+
+
+</div>
+
+
+<!-- 凭证信息 -->
+<div id="proof" style="display:none">
+  <div id="proofimg" style="text-align: center;margin-top:10px">
+
+  </div>
+</div>
+
+
+
+
+<div id="jujuecause" style="display:none">
+  
+    <form id="jujueForm">
+      <div style="margin-top:10px;margin-left:25px">
+        <textarea id="yuanyin" style="width:450px;height:200px;" class="form-control" name="yuanyin"></textarea>
+      </div>
+    </form>
+</div>
+
+
+
+
+
+</body>
+
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/artDialog/artDialog.js" charset="utf-8"></script>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+
+
+
+function view(id){
+    layer.open({
+        title:'商品详情',
+        type: 2,
+        btn:["确定","取消"],
+        area: ['1020px','600px'],
+        content: "{:cmf_plugin_url('AfterSales://admin_index/afterShopinfo')}?id="+id,
+    })
+}
+
+
+
+//查看物流
+function lookwuliu(id) {
+    layer.open({
+        title:'物流信息',
+        type: 2,
+        btn:["确定","取消"],
+        area: ['500px','600px'],
+        content: "{:cmf_plugin_url('AfterSales://admin_index/afterWlxx')}?id="+id,
+    }) 
+}
+
+
+
+
+
+
+
+
+//查看凭证
+function lookproof(proof){
+
+  var domain = "{$site_domain}";
+
+  var html="";
+  $.each(proof,function(k,v){
+    html += '<img src="'+domain+v+'" style="width:750px;margin-bottom:10px">'; 
+
+  })
+
+  $('#proofimg').html(html);
+
+  layer.open({
+    title:'凭证信息',
+    type:1,
+    area:['800px','600px'],
+    content:$('#proof')
+
+  })
+}
+
+
+
+//拒绝
+function refusecause(orderid){
+  layer.open({
+    title:'拒绝原因',
+    type:1,
+    btn:["确定","取消"],
+    area:['500px','400px'],
+    content:$('#jujuecause'),
+    yes:function(index, layero){
+      var yaunyin = $('#yuanyin').val();
+
+      $.ajax({
+        url:"{:cmf_plugin_url('AfterSales://admin_index/jujue')}",
+        data:{orderid:orderid,yuanyin:yaunyin},
+        success:function(data){
+
+            console.log(data);
+
+              if(data.code==1){
+                  layer.msg(data.msg,{icon:1,time:1500},function(){
+                      layer.closeAll();
+                      window.location.reload();
+                  });
+              }else{
+                  layer.msg('退款失败',{icon:2});
+              }
+          },
+          error:function(){
+            layer.msg('系统错误',{icon:2});
+          }
+      })
+    }
+  })
+}
+
+
+
+
+
+
+
+//确认收货
+function querenshouhuo(orderid){
+  layer.open({
+    title:'确认收货',
+    type:2,
+    btn:["确定","取消"],
+    area:['800px','600px'],
+    content:"{:cmf_plugin_url('AfterSales://admin_index/querenShouhuo')}?orderid="+orderid,
+    yes:function(index, layero){
+      var body = layer.getChildFrame('body', index);
+      var refund_money = body.find('#myform').find('input[name=refund_money]').val();
+      if (refund_money=='') {
+        return layer.msg('退款金额不能为空',{icon:2,time:1500});
+      }
+      $.ajax({
+          url:"{:cmf_plugin_url('AfterSales://admin_index/querenShouhuo')}",
+          data:body.find('#myform').serialize(),
+          success:function(data){
+
+            console.log(data);
+
+              if(data.status=='success'){
+                  layer.msg(data.mssage,{icon:1,time:1500},function(){
+                      layer.closeAll();
+                      window.location.reload();
+                  });
+              }else{
+                  layer.msg('退款失败',{icon:2});
+              }
+          },
+          error:function(){
+            layer.msg('系统错误',{icon:2});
+          }
+      })
+            
+
+    }
+
+  })
+}
+
+
+
+
+
+
+
+
+// function jujue(id) {
+//     layer.open({
+//         title:'拒绝原因',
+//         type: 1,
+//         btn:["确定","取消"],
+//         area: ['1020px','600px'],
+//         content: $('#jujue'),
+//         yes:function(index, layero){
+//             // var yuanyin = 
+//             $.ajax({
+//                 url:"{:cmf_plugin_url('AfterSales://admin_index/jujue')}",
+//                 data:body.find('#myform').serialize(),
+//                 success:function(data){
+//                     if(data.code==1){
+//                         layer.msg(data.msg,{icon:1,time:1500},function(){
+//                             layer.closeAll();
+//                             window.location.reload();
+//                         });
+//                     }else{
+//                         layer.msg(data.msg,{icon:2});
+//                     }
+//                 }
+//             })
+            
+
+//         }
+//     })
+// }
+
+</script>
+</html>

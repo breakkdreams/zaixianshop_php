@@ -1,0 +1,306 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <include file="public/head"/>
+    <title>提现列表</title>
+</head>
+<body>
+<div class="wrap">
+	<ul class="nav nav-tabs">
+		<li class="active"><a href="#">提现列表</a></li>
+        <li><a href="{:cmf_plugin_url('Fund://admin_index/recharge')}">充值列表</a></li>
+        <li><a href="{:cmf_plugin_url('Fund://admin_index/payment')}">支付列表</a></li>
+        <li ><a href="{:cmf_plugin_url('Fund://admin_index/refundmManagement')}">退款列表</a></li>
+        <li><a href="{:cmf_plugin_url('Fund://admin_index/accountList')}">用户账户列表</a></li>
+        <li><a href="{:cmf_plugin_url('Fund://admin_index/zftype')}">支付类型</a></li>
+		<li><a href="{:cmf_plugin_url('Fund://admin_index/banklist')}">银行信息</a></li>
+		<li><a href="{:cmf_plugin_url('Fund://payment/index')}">配置管理</a></li>
+    </ul>
+    
+
+	<form class="well form-inline margin-top-20" method="post" action="{:cmf_plugin_url('Fund://admin_index/index')}">
+		<select name="types" class="form-control">
+            <option value="0" <?php if(isset($search['types']) && $search['types']==0){echo 'selected';} ?>>请选择</option>
+            <option value="1" <?php if(isset($search['types']) && $search['types']==1){echo 'selected';} ?>>订单号</option>
+            <option value="2" <?php if(isset($search['types']) && $search['types']==2){echo 'selected';} ?>>用户手机</option>
+        </select>
+        <input type="text" value="{$search['category']|default=''}" class="form-control" name="category">
+        <select name="type" class="form-control" style="width:100px">
+            <option value="0" <?php if(isset($search['type']) && $search['type']==0){echo 'selected';} ?>>请选择</option>
+            <option value="1" <?php if(isset($search['type']) && $search['type']==1){echo 'selected';} ?>>支付宝</option>
+            <option value="2" <?php if(isset($search['type']) && $search['type']==2){echo 'selected';} ?>>微信</option>
+            <option value="3" <?php if(isset($search['type']) && $search['type']==3){echo 'selected';} ?>>银行卡</option>
+        </select>
+        提现金额范围
+        <input type="text" value="{$search['addmoney']|default=''}" class="form-control" name="addmoney" style="width:100px">-
+        <input type="text" value="{$search['endmoney']|default=''}" class="form-control" name="endmoney" style="width:100px">
+        提现日期
+        <input type="text" class="form-control js-datetime" autocomplete="off"  name="add_time" value="{$search['add_time']|default=''}" placeholder="开始时间" style="width:150px">
+        <input type="text" class="form-control js-datetime" autocomplete="off" name="end_time" value="{$search['end_time']|default=''}" placeholder="结束时间" style="width:150px">
+        <select name="status" class="form-control">
+            <option value="0" <?php if(isset($search['status']) && $search['status']==0){echo 'selected';} ?>>全部状态</option>
+            <option value="1" <?php if(isset($search['status']) && $search['status']==1){echo 'selected';} ?>>提交审核</option>
+            <option value="2" <?php if(isset($search['status']) && $search['status']==2){echo 'selected';} ?>>审核通过</option>
+            <option value="3" <?php if(isset($search['status']) && $search['status']==3){echo 'selected';} ?>>未通过</option>
+        </select>
+        <input type="submit" value="搜索" class="btn btn-success">
+    </form>	
+    
+    <!-- <a href="{:cmf_plugin_url('Fund://admin_index/uotyoiandizhi')}">更改图片</a> -->
+
+<form method="post" class="js-ajax-form" action="{:cmf_plugin_url('Fund://admin_index/per_delall')}">
+
+    <button type="submit" class="btn btn-success js-ajax-submit"
+               onclick="return confirm('确定删除')" style="padding:0 18px;" >批量删除</button>
+
+   <table class="table table-hover table-bordered" style="margin-top:20px">
+   	<thead>
+		<tr>
+			<th width="35" align="center">
+                <input type="checkbox" value="" id="check_box_all" >
+            </th>
+            <th align="center">交易订单号</th>
+            <th align="center">用户名</th>
+            <th align="center">提现用户</th>
+            <th align="center">手机号码</th>
+            <th align="center">提现方式</th>
+            <th align="center">提现账户</th>
+            <th align="center">提现金额</th>
+            <th align="center">提现日期</th>
+            <th align="center">状态</th>
+            <th align="center" style="width: 200px">操作</th>
+		</tr>
+	</thead>
+	<tbody>
+		<volist name="data" id="vo">
+		<tr>
+        <td align="center" width="35">
+            <input type="checkbox" class="check_box" name="id[]" value="{$vo['id']}">
+        </td>
+        <td align="center">{$vo['trade_sn']}</td>
+        <td align="center">{$vo['username']}</td>
+        <td align="center">{$vo['accountname']}</td>
+        <td align="center">{$vo['phone']}</td>
+        <td align="center">{$contype[$vo['type']]}</td>
+        <td align="center">{$vo['account']}</td>
+        <td align="center">￥{$vo['amount']}</td>
+        <td align="center">{:date('Y-m-d H:i:s',$vo['addtime'])}</td>
+        <td align="center">
+            <switch name="$vo['status']">
+            <case value="1">
+                <span style="color:#1cbb9b;" >提交</span></case>
+            <case value="2">
+                <span style="color:#55acee;" >审核通过</span></case>
+            <case value="3">
+                <span style="color:#f40;" >未通过</span></case>
+            </switch>
+        </td>
+        <td align="center">
+            <if condition="$vo['status']==1">
+               
+                <switch name="$vo['number']">
+                        <case 1><a href="#" onclick="makeMoney({$vo['id']})"  class="btn btn-info btn-sm ">手动打款</a></case>
+                        <case 2><a href="#" onclick="zidong({$vo['id']},{$vo['type']})"  class="btn btn-info btn-sm">自动打款</a></case>
+                        <case 3><a href="#" onclick="makeMoney({$vo['id']})"  class="btn btn-info btn-sm ">手动打款</a>
+                        <a href="#" onclick="zidong({$vo['id']},{$vo['type']})"  class="btn btn-info btn-sm">自动打款</a>
+                    </case>
+                </switch>
+
+                <a href="javascript:;"  onclick="edit({$vo['id']})" class="btn btn-danger btn-sm">拒绝</a>
+            <elseif condition="$vo['status']==2">
+                <if condition="empty($vo['make'])">
+                    <p>已自动打款</p>
+                    <else />
+                    <a href="#" onclick="makekan({$vo['id']});"  class="btn btn-info btn-sm">已手动打款</a>
+                </if>
+
+            <elseif condition="$vo['status']==3">
+                <button type='button' class="btn btn-default btn-sm">已拒绝</button>
+                <a class="btn btn-info btn-sm" onclick="view({$vo.id})">查看退回原因</a>
+            </if>
+        </td>
+        </tr>
+	 </volist>
+	</tbody>	
+
+   </table>
+
+	<div class="pagination">{$page}</div>
+</form>  
+
+    <div id="write" class="wrap" style="display: none">
+        <form method="post" class="js-ajax-form" action="{:cmf_plugin_url('Fund://admin_index/pre_up')}">
+            <input type="hidden" name="id" id="pre_id" value="">
+
+               <textarea name="jujue" style="height: 300px" placeholder="请输入拒绝内容" class="form-control"></textarea>
+
+            <button type="submit" class="btn btn-success js-ajax-submit" style="float: right;margin-top: 80px">提交</button>
+        </form>
+        
+    </div>  
+
+
+
+    <div id="make" class="wrap" style="display: none">
+            <form method="post" class="js-ajax-form" action="{:cmf_plugin_url('Fund://admin_index/adopt')}">
+                <input type="hidden" name="id" id="make_id" value="">
+    
+                   <textarea name="make" style="height: 300px" placeholder="请输入打款账户" class="form-control"></textarea>
+    
+                <button type="submit" class="btn btn-success js-ajax-submit" style="float: right;margin-top: 80px">提交</button>
+            </form>
+            
+    </div>  
+
+
+    <div id="write2" class="wrap" style="display: none">
+        <form method="post" class="js-ajax-form" action="#">
+            <textarea name="jujue" id="con" style="height: 300px" placeholder="请输入拒绝内容" class="form-control"></textarea>
+        </form>
+        
+    </div>  
+
+    <div id="makekan" class="wrap" style="display: none">
+            <form method="post" class="js-ajax-form" action="#">
+                <textarea name="jujue" id="con2" style="height: 300px" placeholder="请输入拒绝内容" class="form-control"></textarea>
+            </form>
+            
+    </div>  
+
+
+</div>
+
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+   //全选/取消
+   $('#check_box_all').on('click',function(){
+        $('.check_box').prop('checked',$('#check_box_all').prop('checked'));
+   }); 
+ 
+   //编辑理由
+   function edit(id){
+     $("#pre_id").val(id);
+     layer.open({
+        title:"请写驳回理由",
+        type:1,
+        area:['650px','500px'],
+        content:$("#write"),
+        end: function () {
+            $("#write").css('display','none');
+        }
+     })
+   }
+
+
+  //自动打款
+   function zidong(id,status){
+    
+        layer.confirm('您确定自动打款吗？', {
+        btn: ['确定', '取消'] //可以无限个按钮
+        
+        }, function(index, layero){
+
+            $.ajax({
+            type:"get",// get或者post
+            url:"{:cmf_plugin_url('Fund://admin_index/adopt')}",// 请求的url地
+            data:{id:id,status:status},
+            dataType:"json",
+            success:function(data){
+                if( data['msg']=='提现通过' ){
+                    layer.msg('自动打款成功',{icon: 1,time:2000}, function(){
+
+                        location.reload();
+
+                      }); 
+                    
+                }else{
+                    layer.msg(data['msg'],{icon: 2,time:2000}, function(){
+
+                    location.reload();
+
+                    }); 
+                }
+                
+            }
+            });
+
+       
+        }, function(index){
+              
+        });
+   }
+
+
+   //打款账户
+   function makeMoney(id){
+     $("#make_id").val(id);
+     layer.open({
+        title:"请填写打款账户",
+        type:1,
+        area:['650px','500px'],
+        content:$("#make"),
+        end: function () {
+            $("#make").css('display','none');
+        }
+     })
+   }
+
+   //打款
+   function makekan(id){
+     var da ='';
+      $.ajax({
+       type:"get",// get或者post
+       url:"{:cmf_plugin_url('Fund://admin_index/makekan')}",// 请求的url地
+       data:{id},
+       dataType:"json",
+       success:function(data){
+         da = data;
+         $("#con2").val(da);
+       }
+      });
+    
+      layer.open({
+        title:"驳回理由",
+        type:1,
+        area:['650px','500px'],
+        content:$("#makekan"),
+        end: function () {
+            $("#makekan").css('display','none');
+        }
+        
+     })
+   }
+
+
+ 
+   function view(id){
+     var da ='';
+      $.ajax({
+       type:"get",// get或者post
+       url:"{:cmf_plugin_url('Fund://admin_index/fundcon')}",// 请求的url地
+       data:{id},
+       dataType:"json",
+       success:function(data){
+         da = data;
+         $("#con").val(da);
+       }
+      });
+    
+      layer.open({
+        title:"驳回理由",
+        type:1,
+        area:['650px','500px'],
+        content:$("#write2"),
+        end: function () {
+            $("#write2").css('display','none');
+        }
+        
+     })
+   }
+
+
+</script>
+</body>
+</html>

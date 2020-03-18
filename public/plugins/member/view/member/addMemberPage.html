@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>会员管理</title>
+    <include file='public/head'>
+</head>
+<body>
+    <div class="wrap js-check-wrap" id="addFormJt">
+
+        <form method="POST" class="js-ajax-form" id="da" action="">
+            <table class="table table-bordered table-hover"  style="text-align:center;">
+                <tr>
+                    <td class="td-head"><label class="control-label mb-0" >用户名</label></td>
+                    <td class="td-body">
+                        <input type="text" class="form-control"  name="username" id="username" placeholder="随机生成"  value="" disabled="disabled"  >
+                    </td>
+                    <td class="td-head">昵称</td>
+                    <td class="td-body">
+                        <input type="text" class="form-control" required name="nickname" maxlength="20"  placeholder="输入2-20位的昵称">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-head">密码</td>
+                    <td class="td-body">
+                        <input type="password" class="form-control" required name="password" placeholder="密码应该为6-20位之间">
+                    </td>
+                    <td class="td-head">确认密码</td>
+                    <td class="td-body">
+                        <input type="password" class="form-control" required name="re_password" placeholder="再次输入密码">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="td-head">手机号</td>
+                    <td class="td-body">
+                        <input type="text" class="form-control" required name="mobile" oninput = "value=value.replace(/[^\d]/g,'')" maxlength="15"  placeholder="请输入手机号" >
+                    </td>
+                    <td class="td-head">邮箱</td>
+                    <td class="td-body">
+                        <input type="text" class="form-control" required name="email" placeholder="请输入邮箱">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-head"><label class="control-label mb-0" for="vip">vip会员</label></td>
+                    <td class="td-body">
+                        是否为VIP会员：
+                        <input type="checkbox" name="vip" lay-skin="primary" id="vip" >
+                    </td>
+                    <td class="td-head">过期时间</td>
+                    <td class="td-body">
+                        <input type="text" autocomplete="off" class="js-bootstrap-date form-control" name="overduedate" v placeholder="过期时间" >
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-head">会员组</td>
+                    <td class="td-body">
+                        <select type="text"  name="groupid" class="form-control">
+                            <volist name="member_group"  id="group">
+                                <option value="{$group.groupid}" >{$group.name}</option>
+                            </volist>
+                        </select>
+                    </td>
+                </tr>
+                
+
+            </table>
+            <div style="text-align:center;">
+                <!-- <button type="submit" class="btn btn-success js-ajax-submit" name="on" >提交</button> -->
+                <!-- 测试的时候js-ajax-submit从class里取出来 -->
+            </div>
+        </form>
+    </div>
+
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layer/layer.js"></script>
+
+
+<script type="text/javascript">
+
+    /**
+     * 获取窗口中的元素，然后返回给父级
+     * @return {[type]} [description]
+     */
+    function callbackdata(){
+        var arr = '';
+        // $("input[name=ceshi]").each(function(){
+        //     arr = $(this).val()+','+arr;
+        // })
+        // console.log(arr);
+
+
+        return '1'
+    }    
+</script>
+
+</body>
+</html>

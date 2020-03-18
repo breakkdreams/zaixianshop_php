@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>运费配置</title>
+    <include file='public/head'>
+        </head>
+<body>
+<div class="wrap js-check-wrap" id="addFormJt">
+
+    <form method="POST" class="js-ajax-form" id="da" action="">
+        <table class="table table-bordered table-hover"  style="text-align:center;">
+            <tr>
+                <td class="td-head">模块</td>
+                <td class="td-body">
+                    <input type="text" class="form-control" required name="symbol" placeholder="模块">
+                </td>
+            </tr>
+            <tr>
+                <td class="td-head">方法</td>
+                <td class="td-body">
+                    <input type="text" class="form-control" required name="methods" placeholder="方法">
+                </td>
+            </tr>
+<!--            <tr>-->
+<!--                <td class="td-head">参数</td>-->
+<!--                <td class="td-body">-->
+<!--                    <input type="text" class="form-control" required name="param" placeholder="参数">-->
+<!--                </td>-->
+<!--            </tr>-->
+
+
+        </table>
+        <div style="text-align:center;">
+            <!-- <button type="submit" class="btn btn-success js-ajax-submit" name="on" >提交</button> -->
+            <!-- 测试的时候js-ajax-submit从class里取出来 -->
+        </div>
+    </form>
+</div>
+
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layer/layer.js"></script>
+
+
+<script type="text/javascript">
+
+    /**
+     * 获取窗口中的元素，然后返回给父级
+     * @return {[type]} [description]
+     */
+    function callbackdata(){
+        var arr = '';
+        // $("input[name=ceshi]").each(function(){
+        //     arr = $(this).val()+','+arr;
+        // })
+        // console.log(arr);
+
+
+        return '1'
+    }
+</script>
+
+</body>
+</html>

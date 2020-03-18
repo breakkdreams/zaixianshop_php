@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>物流信息</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+      .table_form th{text-align: left;}
+      .subnav { padding:0px 10px; }
+      .pad-10 {
+    padding: 10px;
+    overflow: hidden;
+}
+.col-tab .contentList {
+    border: 1px solid #dce3ed;
+
+}
+.table_form {
+    font-size: 12px;
+}
+body fieldset legend {
+    padding: 3px 8px;
+    font-weight: 700;
+    border: 1px solid #D8D8D8;
+    background-color: #F9F9F9;
+}
+legend {
+    display: block;
+    padding-inline-start: 2px;
+    padding-inline-end: 2px;
+}
+  </style>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+  
+    <div class="pad-10">
+      <div class="col-tab">
+         <div id="div_setting_2" class="contentList pad-10">
+             <fieldset>
+              <legend>物流单号信息</legend>
+              <table width="100%" class="table_form"  style="margin-top:-10px;margin-left:10px">
+               <tbody>
+                  <tr>
+                     <td width="100"><strong style="font-size:15px">快递类型</strong></td>
+                     <td >{$order.shipper_name}</td>
+                     <td id='kuaidi_xx' style="display:none">{$order.shipper_code}</td>
+
+                 </tr>
+                 <tr style="margin-top:10px">
+                     <td><strong style="font-size:15px">快递单号</strong></td>
+                     <td id='bianhao_xx'>{$order.logistics_order}</td>
+                 </tr>
+             </tbody>
+            </table>
+     </fieldset>
+     <fieldset style="margin-top:10px">
+        <legend>物流信息</legend>
+        <table width="100%" class="table_form">
+           <tbody id='tbody'>
+              <ul  class="layui-timeline">
+
+                <if condition="isset($logisticResult.Reason)">
+                  <div>{$logisticResult.Reason}</div>
+                </if>
+
+                <foreach name="$logisticResult.Traces" item="vo">
+                  <li class="layui-timeline-item">
+                      <i class="layui-icon layui-timeline-axis"></i>
+                      <div class="layui-timeline-content layui-text">
+
+
+                          <div class="layui-timeline-title">{$vo.AcceptStation}</div>
+                          <div>{$vo.AcceptTime}</div>
+                      </div>
+                  </li>
+                </foreach>
+            
+              </ul>
+          </tbody>
+      </table>
+  </fieldset>
+
+  </div>
+
+  </div>
+  </div>
+
+
+  </div>
+</body>
+
+<include file="public/scripts"/>
+
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+
+</html>

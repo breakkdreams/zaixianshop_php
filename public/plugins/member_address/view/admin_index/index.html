@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<include file="public/head"/>
+<style>
+	a{color:#18BC9C;}
+</style>
+</head>
+<body>
+
+	<div class="wrap js-check-wrap">
+		<ul class="nav nav-tabs">
+			<li class="active"><a href="">联动菜单</a></li>
+			<li><a href="{:cmf_plugin_url('MemberAddress://user_address/index')}">用户收货地址管理</a></li>
+		</ul>
+	<br />
+	<form>	
+		<table class="table table-bordered table-hover" style="text-align:center;">
+			<thead class="well">
+				<tr>  
+					<th style="text-align:center;">地区名称</th>
+					<th style="text-align:center;">地区描述</th>
+					<th style="text-align:center;">是否显示</th>
+					<th style="text-align:center;">操作</th>	
+
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td >中国</td>
+					<td></td>
+					<td ><a style="text-decoration:none;color:green;">√</a></td>
+					<!-- <td style="color:red;">×</td> -->
+					<td>
+						<a class="btn btn-sm btn-success "  href="{:cmf_plugin_url('MemberAddress://admin_index/subord')}">查看下级地区</a>
+						<a  class="btn btn-sm btn-default js-ajax-delete " data-msg="确定更新吗？"  href="{:cmf_plugin_url('MemberAddress://admin_index/updateConfig')}" >更新缓存</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+	</div>
+<script src="__STATIC__/js/layui/layui.all.js" charset="utf-8"></script>
+<script src="__STATIC__/js/layer.js" charset="utf-8"></script>
+<include file="public/scripts"/>
+</body>

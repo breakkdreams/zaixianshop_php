@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <include file="public/head"/>
+    <title>支付宝配置</title>
+ 
+</head>
+<body>
+<div class="wrap ">
+	<ul class="nav nav-tabs">
+		<li><a href="{:cmf_plugin_url('Fund://admin_index/index')}" >提现列表</a></li>
+		<li><a href="{:cmf_plugin_url('Fund://admin_index/recharge')}">充值列表</a></li>
+        <li><a href="{:cmf_plugin_url('Fund://admin_index/payment')}">支付列表</a></li>
+        <li ><a href="{:cmf_plugin_url('Fund://admin_index/refundmManagement')}">退款列表</a></li>
+        <li><a href="{:cmf_plugin_url('Fund://admin_index/accountList')}">用户账户列表</a></li>
+		<li><a href="{:cmf_plugin_url('Fund://admin_index/zftype')}">支付类型</a></li>
+		<li><a href="{:cmf_plugin_url('Fund://admin_index/banklist')}">银行信息</a></li>
+        <li class="active"><a href="#">配置管理</a></li>
+	</ul>
+
+	<form method="post" class="margin-top-20 js-ajax-form" action="{:cmf_plugin_url('Fund://payment/setup')}" style="width:800px;"> 
+
+		<table class="table table-hover table-bordered" style="margin-top:20px">
+                <thead>
+                    <tr>
+                        <th  align="center">id</th>
+                        <th  align="center">图片</th>
+                        <th  align="center">名称</th>
+                        <th  align="center">状态</th>
+                        <th  align="center">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <volist name="da" id="vo">
+                       <tr>
+                        <td  align="center">{$vo['id']}</td>
+                        <td  align="center"><img src="__ROOT__{$vo['photo']}" style="height:50px"></td>
+                        <td  align="center">{$vo['name']}</td>
+                        <td  align="center">
+                        <switch name="$vo['type']">
+                           <case value="1">开启</case> 
+                           <case value="2">关闭</case> 
+                        </switch></td>
+                        <td  align="center"><a class="btn btn-success btn-sm js-ajax-delete" data-msg="确认修改状态？" href="{:cmf_plugin_url('Fund://payment/uptype')}?id={$vo['id']}&type={$vo['type']}" style="margin-left: 5px;" >
+                            <switch name="$vo['type']">
+                                    <case value="1">关闭</case> 
+                                    <case value="2">开启</case> 
+                                 </switch>
+                        </a></td>
+                       </tr>
+                    </volist>
+                    
+                </tbody>
+
+  
+        </table>
+        
+	</form>
+
+
+
+
+
+</div>
+
+<include file="public/scripts"/>
+<script src="__PLUGIN_TMPL__/public/assets/layui/layui.all.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+
+
+	
+</script>
+</body>
+</html>	

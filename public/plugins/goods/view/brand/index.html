@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>商品管理</title>
+    <include file='public/head'>
+        <style>
+            table th, table td{text-align: center;}
+            .ml-10 { margin-left: 10px; }
+            .newa:hover{color: #000;/*#18BC9C;*/}
+        </style>
+</head>
+<body>
+    
+    <div class="wrap js-check-wrap">
+
+        <ul class="nav nav-tabs">
+            <li><a href="{:cmf_plugin_url('Goods://goods/index')}">已上架商品</a></li>
+            <li><a href="{:cmf_plugin_url('Goods://goods/auditgoods')}">待审核商品</a></li>
+            <li><a href="{:cmf_plugin_url('Goods://goods/illegalgoods')}">违规商品</a></li>
+            <li class="active"><a href="{:cmf_plugin_url('Goods://brand/index')}">商品品牌</a></li>
+
+            <li><a href="{:cmf_plugin_url('Goods://goodscats/index')}">商品分类</a></li>
+            <li><a href="{:cmf_plugin_url('Goods://goodscats/goodsattr')}">商品属性</a></li>
+            <li><a href="{:cmf_plugin_url('Goods://goodscats/goodsspec')}">商品规格</a></li>
+        </ul>
+        
+        <!-- <div style="clear: both; height: 20px;"></div>
+        <a href="javascript:;" class="btn btn-success btn-big add-config-btn" onclick="addcat();">
+            <i class="fa fa-plus-circle normal"></i> 添加新栏目
+        </a>
+        <div style="clear: both; height: 20px;"></div>
+    
+        <form class="well form-inline margin-top-20" action="" method="post">
+            <select type="text" name="stype" class="form-control">
+                <option value="1" ?>  >栏目名称</option>
+            </select>
+            <input type="text" class="form-control" name="keyword" style="width:200px;" value="" placeholder="输入关键词"/>
+            
+            <select type="text" name="isshow" class="form-control">
+                <option value="" selected="">显示/隐藏</option>
+                <option value="1" >显示</option>
+                <option value="2" >隐藏</option>
+            </select>
+            
+
+
+            <input type="submit" class="btn btn-primary" value="搜索" />
+        </form> -->
+
+    
+    </div>
+
+
+
+
+
+<include file='public/scripts'>
+<script src="__STATIC__/js/layer/layer.js"></script>
+<script src="__STATIC__/js/custom/custom.js"></script>
+
+<!-- 弹出层 -->
+<script type="text/javascript">
+
+    /**
+     * 添加栏目
+     */
+    function addcat(){
+        let addurl = "{:cmf_plugin_url('Member://app_config/add')}";
+        layer.open({
+            type: 2,
+            title: '添加栏目',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['800px', '500px'],
+            btn:['提交','关闭'],
+            fixed:false,
+            content: addurl, //iframe的url
+            yes:function(index, layero){
+                var body = layer.getChildFrame('body', index); 
+
+                //parentInfo = window["layui-layer-iframe" + index].callbackdata();
+                //console.log(parentInfo);
+
+
+                
+                var cname = body.find('input[name=name]').val();
+                var curl = body.find('input[name=url]').val();
+                var cimage = body.find('#image_info').val();
+                var ctype = body.find('input[name=type]:checked').val();
+                var cstaus = body.find('input[name=status]:checked').val();
+                //alert(cstaus);
+
+                if(cname==''){
+                    layer.msg('栏目名称不可为空', function(){
+                    });
+                    return false;
+                }
+                
+                
+                $.ajax({   
+                    url:addurl,
+                    type:'post',
+                    data:{  
+                           cname : cname,  
+                           curl : curl,  
+                           cimage : cimage,  
+                           ctype : ctype,
+                           cstaus : cstaus  
+                    },  
+                    dataType:'json',
+                    success:function(datas){
+                        
+                        if(datas.code=='1'){
+                            layer.msg(datas.msg,{time:1500},function(){
+                                layer.closeAll();
+                                window.location.reload(); 
+                            });
+                        }else if(datas.code=='0'){
+                            layer.msg(datas.msg);
+                        }
+                    },
+                    error:function(data){
+                        layer.msg('添加失败');
+                        return false;
+                    }
+                })
+            }
+
+        });
+    }
+
+    /**
+     * 修改会员
+     */
+    function editMember(data){
+        let edit_url = "{:cmf_plugin_url('Member://app_config/edit')}?id="+data;
+        layer.open({
+            type: 2,
+            title: '修改栏目',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['800px', '500px'],
+            btn:['提交','关闭'],
+            fixed:false,
+            content: edit_url, //iframe的url
+            yes:function(index, layero){
+                var body = layer.getChildFrame('body', index); 
+
+                var cname = body.find('input[name=name]').val();
+                var curl = body.find('input[name=url]').val();
+                var cimage = body.find('#image_info').val();
+                var ctype = body.find('input[name=type]:checked').val();
+                var cstaus = body.find('input[name=status]:checked').val();
+                
+
+                if(cname==''){
+                    layer.msg('栏目名称不可为空', function(){
+                    });
+                    return false;
+                }
+                
+                $.ajax({   
+                    url:edit_url,
+                    type:'post',
+                    data:{ 
+                           cid: data,
+                           cname : cname,
+                           curl : curl,  
+                           cimage : cimage,  
+                           ctype : ctype,
+                           cstaus : cstaus  
+                    },  
+                    dataType:'json',
+                    success:function(datas){
+                        
+                        if(datas.code=='1'){
+                            layer.msg(datas.msg,{time:1500},function(){
+                                layer.closeAll();
+                                window.location.reload(); 
+                            });
+                        }else if(datas.code=='0'){
+                            layer.msg(datas.msg);
+                        }
+                    },
+                    error:function(datas){
+                        layer.msg('修改失败');
+                        return false;
+                    }
+                })
+            }
+        });
+    }
+    
+
+</script>
+
+
+
+</body>
+</html>

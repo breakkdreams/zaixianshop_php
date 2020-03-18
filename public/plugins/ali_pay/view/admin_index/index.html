@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>模块演示</title>
+    <include file='public/head'>
+</head>
+<body>
+    	
+	<div class="wrap js-check-wrap">
+        <ul class="nav nav-tabs">
+            <li class="active"><a>基本配置</a>
+            </li>
+        </ul>
+        <br>
+
+		<form method="POST" class="js-ajax-form" action="{:cmf_plugin_url('AliPay://admin_index/editSetting')}">
+			<table class="table table-bordered table-hover"  style="text-align:center;width:800px">
+
+			   	<tbody>
+			   		<tr>
+						<td width="200">是否开启支付宝支付</td>
+						<td>
+							<if condition="$data['alipay_off']==0">
+							<label><input name="setconfig[alipay_off]" type="radio" checked value="0"/>开</label>
+							<label><input name="setconfig[alipay_off]" type="radio" value="1"/>关</label>
+							<else /> 
+							<label><input name="setconfig[alipay_off]" type="radio"  value="0"/>开</label>
+							<label><input name="setconfig[alipay_off]" type="radio" checked value="1"/>关</label>
+						    </if>
+							<a target="_blank" href="https://openhome.alipay.com" style="color:red;">（https://openhome.alipay.com/）</a>
+			            </td>
+					</tr>
+					<tr>
+						<td width="200">应用ID</td>
+						<td><input type="text" name="setconfig[alipay_appid]" class="form-control" class="input-text" value="{$data['alipay_appid']}" ></td>
+					</tr>
+					<tr>
+						<td width="200">商户私钥，您的原始格式RSA私钥</td>
+						<td><textarea name="setconfig[alipay_private_key]" class="form-control" cols="80" rows="10">{$data['alipay_private_key']}</textarea></td>
+					</tr>
+					<tr>
+						<td width="200">支付宝公钥</td>
+						<td>
+						<textarea name="setconfig[alipay_public_key]" class="form-control" cols="80" rows="10">{$data['alipay_public_key']}</textarea>
+						</td>
+					</tr>
+					<tr>
+						<td width="200">支付宝网关</td>
+						<td><input type="text" name="setconfig[alipay_gatewayUrl]" class="form-control" value="{$data['alipay_gatewayUrl']}" ></td>
+					</tr>
+			   		
+			   	</tbody>
+
+			</table>
+			<div style="text-align:center;">
+				<button type="submit" class="btn btn-success js-ajax-submit " name="on" >提交</button>
+				<!-- 测试的时候js-ajax-submit从class里取出来 -->
+		    </div>
+		</form>
+
+	</div>
+<include file="public/scripts"/>
+</body>

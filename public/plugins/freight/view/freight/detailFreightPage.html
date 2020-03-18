@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>运费模块</title>
+    <include file='public/head'>
+    <style>
+        .td-head{font-weight: bold;}
+    </style>
+</head>
+<body>
+    <div class="wrap js-check-wrap" id="addFormJt">
+
+            <table class="table table-bordered table-hover"  style="text-align:center;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>运费模板名称</th>
+                        <th>计费规则</th>
+                        <th>默认首件</th>
+                        <th>默认首费</th>
+                        <th>默认续件</th>
+                        <th>默认续费</th>
+                        <th>包邮条件(计费规则为包邮有效)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{$data.id}</td>
+                        <td>{$data.title}</td>
+                        <td>
+                            <if condition="$data['type'] eq 2">
+                                按件数
+                                <else>
+                                    包邮
+                                </else>
+                                </elseif>
+                            </if>
+                        </td>
+                        <td>{$data.default_num}</td>
+                        <td>{$data.default_price}</td>
+                        <td>{$data.continue_num}</td>
+                        <td>{$data.continue_price}</td>
+                        <td>满足{$data.free_shipping}件包邮</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        <table class="table table-bordered table-hover"  style="text-align:center;">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>配送地区</th>
+                    <th>首件</th>
+                    <th>首费</th>
+                    <th>续件</th>
+                    <th>续费</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <volist name="itemData" id="vo">
+                    <tr>
+                        <td>{$vo.id}</td>
+                        <td>{$vo.area}</td>
+                        <td>{$vo.first_num}</td>
+                        <td>{$vo.first_price}</td>
+                        <td>{$vo.continue_num}</td>
+                        <td>{$vo.continue_price}</td>
+                    </tr>
+                </volist>
+            </tbody>
+
+        </table>
+
+
+
+    </div>
+
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layer/layer.js"></script>
+
+
+<script type="text/javascript">
+
+    /**
+     * 获取窗口中的元素，然后返回给父级
+     * @return {[type]} [description]
+     */
+    function callbackdata(){
+        var arr = '';
+        return '1'
+    }    
+</script>
+
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>订单管理列表</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+  </style>
+</head>
+<body>
+  <div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/order/AdminIndex/index')">
+            <li class="active"><a href="{:cmf_plugin_url('Order://admin_index/index')}">订单管理列表</a></li>
+        </if>
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/order/Config/index')">
+            <li><a href="{:cmf_plugin_url('Order://config/index')}">订单配置</a></li>
+        </if>
+    </ul>
+
+    <form class="well form-inline margin-top-20">
+      订单编号：
+      <input type="text" class="form-control" name="ordersn" value="<?php if(isset($param['ordersn'])){echo $param['ordersn'];}?>" autocomplete="off">
+      支付方式：
+      <select class="form-control" name="pay_type">
+        <option value=""  <?php if(isset($param['pay_type']) && $param['pay_type']==''){echo 'selected';}?> >全部方式</option>
+        <option value="1" <?php if(isset($param['pay_type']) && $param['pay_type']==1){echo 'selected';}?> >支付宝</option>
+        <option value="2" <?php if(isset($param['pay_type']) && $param['pay_type']==2){echo 'selected';}?> >微信</option>
+        <option value="3" <?php if(isset($param['pay_type']) && $param['pay_type']==3){echo 'selected';}?> >银行卡</option>
+        <option value="4" <?php if(isset($param['pay_type']) && $param['pay_type']==4){echo 'selected';}?> >余额</option>
+      </select>
+      下单时间：
+      <input type="text" class="form-control js-date" name="start_addtime" value="<?php if(isset($param['start_addtime']) && $param['start_addtime']!=''){echo $param['start_addtime'];}?>" autocomplete="off">
+      至
+      <input type="text" class="form-control js-date" name="end_addtime" value="<?php if(isset($param['end_addtime']) && $param['end_addtime']!=''){echo $param['end_addtime'];}?>" autocomplete="off">
+      <select class="form-control" name="status">
+        <option value="">全部状态</option>
+        <option value="1" <?php if(isset($param['status']) && $param['status']==1){echo 'selected';}?> >待支付</option>
+        <option value="2" <?php if(isset($param['status']) && $param['status']==2){echo 'selected';}?> >待发货</option>
+        <option value="3" <?php if(isset($param['status']) && $param['status']==3){echo 'selected';}?> >待收货</option>
+        <option value="4" <?php if(isset($param['status']) && $param['status']==4){echo 'selected';}?> >待评价</option>
+        <!-- <option value="5" <?php if(isset($param['status']) && $param['status']==5){echo 'selected';}?> >已评价</option> -->
+        <option value="6" <?php if(isset($param['status']) && $param['status']==6){echo 'selected';}?> >已删除</option>
+      </select>
+
+      <input type="submit" class="btn btn-primary " value="搜索">
+    </form>
+
+
+    <form name="myform" id="myform" class="js-ajax-form" action="{:cmf_plugin_url('Order://admin_index/orderManageDel')}" method="post">
+        <table class="table table-hover table-bordered table-list" id="menus-table">
+            <thead>
+                <tr>
+                    <th>
+                        <label>
+                            <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                        </label>
+                    </th>
+                   <th class="text-center">ID</th>
+                   <th class="text-center">订单编号</th>
+                   <th class="text-center">收货人</th>
+                   <th class="text-center">收货地址(省)</th>
+                   <th class="text-center">收货地址(市)</th>
+                   <th class="text-center">收货地址(区)</th>
+                   <th class="text-center" style="width:180px">详细地址</th>
+                   <th class="text-center">收货联系方式</th>
+                   <th class="text-center">添加日期</th>
+                   <th class="text-center">支付方式</th>
+                   <th class="text-center">状态</th>
+                   <th class="text-center">操作</th>
+
+                </tr>
+            </thead>
+              
+            <tbody>
+                <volist name="order" id="vo">
+                    
+                <tr>
+                    <td>
+                        <label>
+                            <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x"
+                                   name="id[]" value="{$vo.id}">
+                        </label>
+                    </td>
+                    <td class="text-center">{$vo.id}</td>
+                    <td class="text-center">{$vo.ordersn}</td>
+                    <td class="text-center">{$vo.lx_name}</td>
+                    <td class="text-center">{$vo.province}</td>
+                    <td class="text-center">{$vo.city}</td>
+                    <td class="text-center">{$vo.area}</td>
+                    <td class="text-center">{$vo.address}</td>
+                    <td class="text-center">{$vo.lx_mobile}</td>
+                    <td class="text-center">{$vo.addtime?date('Y-m-d H:i:s',$vo.addtime):''}</td>
+                    <td class="text-center">
+                        <switch name="vo.pay_type">
+                            <case value="1">支付宝</case>
+                            <case value="2">微信</case>
+                            <case value="3">银行卡</case>
+                            <case value="4">余额</case>
+                            <default />待支付
+                        </switch>
+                    </td>
+                    <td class="text-center">
+                        <switch name="vo.status">
+                            <case value="1">待支付</case>
+                            <case value="2">待发货</case>
+                            <case value="3">待收货</case>
+                            <case value="4">待评价</case>
+                            <case value="5">已完成</case>
+                            <case value="6">已删除</case>
+                            <!-- <case value="7">申请退款</case>
+                            <case value="8">退款成功</case>
+                            <case value="9">客服介入</case> -->
+                        </switch>
+                        {$vo.remind}
+                    </td>
+                    <td class="text-center">
+                        <if condition="$vo.status==1">
+                            <a href="javascript:;" class="btn btn-danger btn-sm" onclick="editprice({$vo.id})">改价</a>
+                            <a href="javascript:void(0);" class="btn btn-warning btn-sm" onclick="editcity({$vo.id})">修改地址</a>
+                        </if>
+
+                        <if condition="$vo.status==2">
+                            <a href="javascript:void(0);" class="btn btn-warning btn-sm" onclick="editcity({$vo.id})">修改地址</a>
+                            <a href="javascript:void(0);" class="btn btn-success btn-sm" onclick="orderfh({$vo.id})">发货</a>
+                        </if>
+
+                        <if condition="$vo.status!=1 && $vo.status!=2">
+                            <a href="javascript:void(0);" class="btn btn-primary btn-sm" onclick="view2({$vo.id})">物流信息</a>
+                        </if>
+
+                        <a href="javascript:void(0);" class="btn btn-info btn-sm" onclick="view({$vo.id})">商品详情</a>
+                        <a href="javascript:void(0);" class="btn btn-info btn-sm" onclick="orderdetail({$vo.id})">订单详情</a>
+                        <if condition="$vo.status==2 || $vo.status==3">
+                            <a href="javascript:void(0);" class="btn btn-warning btn-sm" style="background: brown;border-color:brown" onclick="yanchang_shouhuo({$vo.id})">延长收货</a>
+                        </if>
+                    </td>
+                </tr>
+                </volist>
+            </tbody> 
+        </table>
+        <div style="margin-left:10px">
+            <label><input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                全选/取消
+            </label>
+            <button style="margin-left:10px"  type="submit" class="btn btn-primary btn-sm js-ajax-submit" data-msg="确定要删除吗？">批量删除</button>
+        </div>
+        
+        <div class="pagination">{$page|default=''}</div>
+    </form>
+
+
+</div>
+
+
+
+
+</body>
+
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/artDialog/artDialog.js" charset="utf-8"></script>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        Wind.css('treeTable');
+        Wind.use('treeTable', function () {
+            $("#menus-table").treeTable({
+                indent: 20,
+                initialState: 'expanded'
+            });
+        });
+    });
+
+
+
+
+
+
+//订单详情
+function orderdetail(id){
+    layer.open({
+        title:'详情信息',
+        type: 2,
+        btn:["确定","取消"],
+        area: ['500px','600px'],
+        content: "{:cmf_plugin_url('Order://admin_index/orderDetail')}?id="+id,
+    })
+}
+
+
+
+
+
+
+function view2(id) {
+    layer.open({
+        title:'物流信息',
+        type: 2,
+        btn:["确定","取消"],
+        area: ['500px','600px'],
+        content: "{:cmf_plugin_url('Order://admin_index/orderManageWlxx')}?id="+id,
+    }) 
+}
+
+
+
+function view(id){
+    layer.open({
+        title:'商品详情',
+        type: 2,
+        btn:["确定","取消"],
+        area: ['1020px','600px'],
+        content: "{:cmf_plugin_url('Order://admin_index/orderManageShopinfo')}?id="+id,
+    })
+}
+
+
+function orderfh(id) {
+    layer.open({
+        title:'订单发货',
+        type: 2,
+        btn:["确定","取消"],
+        area: ['1020px','600px'],
+        content: "{:cmf_plugin_url('Order://admin_index/orderManageDdfh')}?id="+id,
+        yes:function(index, layero){
+            var body = layer.getChildFrame('body', index);
+            var shippercode = body.find('#myform').find('select[name=shippercode]').val();
+            var logistics_order = body.find('#myform').find('input[name=logistics_order]').val();
+            if (shippercode=='') {
+                return layer.msg('快递公司不能为空',{icon:2,time:1500});
+            }
+            if (logistics_order=='') {
+                return layer.msg('快递单号不能为空',{icon:2,time:1500});
+            }
+            $.ajax({
+                url:"{:cmf_plugin_url('Order://admin_index/orderManageDdfh')}",
+                data:body.find('#myform').serialize(),
+                success:function(data){
+                    if(data.code==1){
+                        layer.msg(data.msg,{icon:1,time:1500},function(){
+                            layer.closeAll();
+                            window.location.reload();
+                        });
+                    }else{
+                        layer.msg(data.msg,{icon:2});
+                    }
+                }
+            })
+            
+
+        }
+    })
+}
+
+
+
+
+
+
+//修改收货地址
+function editcity(id){
+    layer.open({
+        title:'修改收货地址',
+        type: 2,
+        btn:["确定","取消"],
+        area: ['800px','600px'],
+        content: "{:cmf_plugin_url('Order://admin_index/editcity')}?id="+id,
+        yes:function(index, layero){
+            var body = layer.getChildFrame('body', index);
+            $.ajax({
+                url:"{:cmf_plugin_url('Order://admin_index/editcity')}?id="+id,
+                data:body.find('#cityform').serialize(),
+                success:function(data){
+                    if(data.code==1){
+                        layer.msg(data.msg,{icon:1,time:1500},function(){
+                            layer.closeAll();
+                            window.location.reload();
+                        });
+                    }else{
+                        layer.msg(data.msg,{icon:2});
+                    }
+                },
+                error:function(){
+                    layer.msg(data.msg,{icon:2});
+                }
+            })
+            
+
+        }
+    })
+}
+
+
+
+
+//延长收货
+function yanchang_shouhuo(id){
+    layer.open({
+        title:'修改收货地址',
+        type: 2,
+        btn:["确定","取消"],
+        area: ['800px','300px'],
+        content: "{:cmf_plugin_url('Order://admin_index/prolongShouhuo')}?id="+id,
+        yes:function(index, layero){
+            var body = layer.getChildFrame('body', index);
+            $.ajax({
+                url:"{:cmf_plugin_url('Order://admin_index/prolongShouhuo')}?id="+id,
+                data:body.find('#ysform').serialize(),
+                success:function(data){
+                    if(data.code==1){
+                        layer.msg(data.msg,{icon:1,time:1500},function(){
+                            layer.closeAll();
+                            window.location.reload();
+                        });
+                    }else{
+                        layer.msg(data.msg,{icon:2});
+                    }
+                },
+                error:function(){
+                    layer.msg(data.msg,{icon:2});
+                }
+            })
+            
+
+        }
+    })
+}
+
+
+
+
+
+//修改价格
+function editprice(id){
+    layer.open({
+        title:'修改价格',
+        type: 2,
+        btn:["确定","取消"],
+        area: ['800px','500px'],
+        content: "{:cmf_plugin_url('Order://admin_index/editprice')}?id="+id,
+        yes:function(index, layero){
+            var body = layer.getChildFrame('body', index);
+            $.ajax({
+                url:"{:cmf_plugin_url('Order://admin_index/editprice')}?id="+id,
+                data:body.find('#priceForm').serialize(),
+                success:function(data){
+                    if(data.code==1){
+                        layer.msg(data.msg,{icon:1,time:1500},function(){
+                            layer.closeAll();
+                            window.location.reload();
+                        });
+                    }else{
+                        layer.msg(data.msg,{icon:2});
+                    }
+                },
+                error:function(){
+                    layer.msg(data.msg,{icon:2});
+                }
+            })
+            
+
+        }
+    })
+}
+
+
+
+
+
+
+
+
+
+
+</script>
+</html>

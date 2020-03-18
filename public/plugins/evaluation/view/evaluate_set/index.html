@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <include file="public/head"/>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>评价配置</title>
+  <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+  <style type="text/css">
+      a{color:#18BC9C;}
+  </style>
+</head>
+<body>
+  <div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+       
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/evaluation/AdminIndex/index')">
+            <li><a href="{:cmf_plugin_url('Evaluation://admin_index/index')}">评价列表</a></li>
+        </if>
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/evaluation/AdminIndex/scoreType')">
+            <li><a href="{:cmf_plugin_url('Evaluation://admin_index/scoreType')}">评分项</a></li>
+        </if>
+        <if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/evaluate/EvaluateSet/index')">
+            <li class="active"><a href="{:cmf_plugin_url('Evaluation://evaluate_set/index')}">评价配置</a></li>
+        </if>
+    </ul>
+    <p style="font-size:25px;margin-top:20px">评价配置</p>
+    <form name="myform" style="margin-top:20px" id="myform" class="js-ajax-form" method="post" action="{:cmf_plugin_url('Evaluation://evaluate_set/evaluateSetSave')}">
+        <table class="table table-hover table-bordered table-list" style="width:40%">
+          <tr>
+            <td>是否允许匿名</td>
+            <td>
+              <input type="checkbox" name="is_anonymity" <?php if(isset($peizhi['is_anonymity']) && $peizhi['is_anonymity']==1){echo 'checked';}?> >
+            </td>
+          </tr>
+          <tr>
+            <td>是否允许游客评论</td>
+            <td><input type="checkbox" name="is_comment" <?php if(isset($peizhi['is_comment']) && $peizhi['is_comment']==1){echo 'checked';}?> ></td>
+          </tr>
+          <tr>
+            <td>评论积分奖励</td>
+            <td><input type="text" class="form-control" name="jifen" value="{$peizhi.jifen}" autocomplete="off"></td>
+          </tr>
+          <tr>
+            <td>评论被删除扣除积分</td>
+            <td><input type="text" class="form-control" name="delkoufen" value="{$peizhi.delkoufen}" autocomplete="off"></td>
+          </tr>
+          <tr>
+            <td>是否需要审核</td>
+            <td><input type="checkbox" name="is_audit" <?php if(isset($peizhi['is_audit']) && $peizhi['is_audit']==1){echo 'checked';}?> ></td>
+          </tr>
+          <tr>
+            <td>是否开启验证码</td>
+            <td><input type="checkbox" name="kai_yanzheng" <?php if(isset($peizhi['kai_yanzheng']) && $peizhi['kai_yanzheng']==1){echo 'checked';}?> ></td>
+          </tr>
+        </table>
+        <button type="submit" class="btn btn-success js-ajax-submit">保存</button>
+    </form>
+
+
+</div>
+</body>
+
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layui/layui.all.js"></script>
+<script type="text/javascript">
+
+</script>
+</html>

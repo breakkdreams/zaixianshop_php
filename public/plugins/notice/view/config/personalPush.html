@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include file="public/head"/>
+    <meta charset="utf-8" />
+    <title>邮箱配置</title>
+    <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+    <style type="text/css">
+        a{color:#18BC9C;}
+        .newa:hover{color: #000;}
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="nav01">
+        <ul class="nav nav-tabs">
+            <php> $currentTab = 8 ;</php>
+            <include file="public/nav" />
+        </ul>
+    </div>
+    
+    <div class="row">
+        <div class="span6"  style="margin-left:20px;margin-top:20px">
+
+            <div style="clear: both; height: 20px;" ></div>
+            <a href="{:cmf_plugin_url('Notice://Config/index')}" class="btn btn-sm newa">邮箱配置</a>
+            <a href="{:cmf_plugin_url('Notice://Config/note')}" class="btn btn-sm newa">短信配置</a>
+            <a href="{:cmf_plugin_url('Notice://Config/personalPush')}" class="btn btn-info btn-sm add-config-btn newa">个推配置</a>
+            <a href="{:cmf_plugin_url('Notice://Config/InMail')}" class="btn btn-sm newa">站内信配置</a>
+
+            <form class="form-horizontal js-ajax-form margin-top-20" role="form" method="post"
+                  action="{:cmf_plugin_url('Notice://Config/saveGeTui');}">
+                <div class="form-group">
+                    <label for="input-link_id" class="col-sm-2 control-label">是否开启个推</label>
+                    <div class="col-md-6 col-sm-10">
+                        <input name="is_open" type="radio" value="1" <?php if($peizhi['is_open']==1){echo 'checked';}?> >开 
+                        <input name="is_open" type="radio" value="2" <?php if($peizhi['is_open']==2){echo 'checked';}?> >关
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-link_title" class="col-sm-2 control-label">个推</label>
+                    <div class="col-md-6 col-sm-10">
+                        <input type="text" class="form-control valid" id="input-link_title" name="server" value="{$peizhi.getui}"/>
+                    </div>
+                </div>
+
+                
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button class="btn btn-primary js-ajax-submit" name="on">提交</button>
+                        <input type="reset" class="btn btn-default" value="重填"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+</body>
+<include file="public/scripts"/>
+
+
+</html>

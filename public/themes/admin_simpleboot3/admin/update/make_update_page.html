@@ -1,0 +1,241 @@
+<include file="public@header" />
+<style>
+	.nav-tabs li a{color: #18BC9C;}
+	.isHide{
+		display: none;
+	}
+</style>
+</head>
+<body>
+	<div class="wrap js-check-wrap">
+		<ul class="nav nav-tabs">
+			<?php $currentTab = 2 ;?>
+			<!-- 导出更新包 -->
+			<include file='update/nav'>
+		</ul>
+		<div class="well margin-top-20">
+			<button type="button" class="btn btn-primary" onclick="saveData();">保存数据</button>
+		</div>
+		<h5>系统框架最新版本:{$lastVersion.version|default='未获取到'}</h5>
+		<div class="row margin-top-20"> 
+			<div class="col-md-12">
+				<form class="form-inline">
+					<div class="form-group">
+						<label for="exampleInputName2">更新包类型</label>
+						<select class="form-control" id="issselecttype" name="type">
+							<option value="2">框架更新包</option>
+							<option value="1">文件更新包</option>
+						</select>
+					</div>
+					&nbsp;&nbsp;
+					<div class="form-group">
+						<label for="exampleInputName2">更新包名称</label>
+						<input type="text" class="form-control" id="exampleInputName2" name="versionName" placeholder="请输入更新包名称">
+					</div>
+					&nbsp;&nbsp;
+					<div class="form-group" id="isupdateiframe" >
+						<label for="exampleInputEmail2">更新版本</label>
+						<input type="text" class="form-control" id="exampleInputEmail2" data-lastversion="{$lastVersion.version|default=0}" name="version" placeholder="请输入更新版本号">
+					</div>
+					&nbsp;&nbsp;
+					<div class="form-group" style="display: none;" id="isupdatefile">
+						<label for="exampleInputEmail2">选择文件</label>
+						<button type="button" class="btn btn-success" onclick="addRecords();">选择</button>
+					</div>
+				</form>
+			</div>
+			<div class="col-md-12">
+				<label for="update-content-area">更新内容</label>
+				<textarea class="form-control" id="update-content-area" rows="10" name="detail" ></textarea>
+			</div>
+			<div class="col-md-12" style="display: none;">
+				<table class="table table-bordered margin-top-20" id="add-records-table">
+					<thead>
+						<tr>
+							<th>序号</th>
+							<th>路径</th>
+							<th>内容</th>
+							<th>显示</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div style="display: none;">
+			<a href="" id="dwpkg" target="_blank"></a>
+		</div>
+	</div>
+	<script src="__STATIC__/js/admin.js"></script>
+	<script src="__STATIC__/js/layer/layer.js"></script>
+	<script>
+		var res = [];
+		var selectfile  = null ;
+		var addRecords = function()
+		{
+			//页面层-自定义
+			layer.open({
+				type: 2,
+				title: '添加记录',
+				btn:['添加','取消'],
+				area:['80%','80%'],
+				shadeClose: true,
+				skin: 'yourclass',
+				content: '{:url("admin/update/dirList")}',
+				yes:function( index ){
+					var insert = window["layui-layer-iframe" + index].getChecked();
+	
+					if( insert.length == 0 ){
+						return false;
+					}
+					selectfile = insert;
+					//addTr( insert );
+					layer.close(index);
+				},
+				cancel:function(){
+
+				}
+			});
+		}
+
+		//选择更新类型
+		$( '#issselecttype' ).on( 'change' , function(){
+			let value = $(this).find('option:selected').val();
+			if( value == 2 ){
+				$('#isupdatefile').hide();
+				$('#isupdateiframe').show();
+			}
+			if( value == 1 ){
+				$('#isupdatefile').show();
+				$('#isupdateiframe').hide();
+			}
+		} );
+		/**
+		 * 添加tr
+		 * @param {[type]} insert [description]
+		 */
+		var addTr = function( insert )
+		{
+			var str = '';
+			for (var i = 0; i < insert.length ; i++ ) {
+				var tr = '<tr>';
+					tr += '<td width="50"></td>';
+					tr += '<td width="350">'+insert[i]+'</td>';
+					tr += '<td>';
+						tr += '<textarea class="form-control" rows="3"></textarea>';
+					tr += '</td>';
+					tr += '<td width="70">';
+						tr += '<div class="checkbox">';
+						    tr += '<label>';
+						    	tr += '<input type="checkbox" />显示';
+						    tr += '</label>';
+					  	tr += '</div>';
+					tr += '</td>';
+					tr += '<td width="100">';
+						tr += '<a href="javascript:;" class="btn btn-danger btn-sm" data-tag = "'+insert[i]+'" onclick="removeTr(this,'+i+')">移除</a>';
+					tr += '</td>';
+				tr += '</tr>';
+				str += tr;
+			}
+			$( '#add-records-table tbody' ).append( str );
+			resetSerialNumber();
+		}
+
+		//重置序号
+		var resetSerialNumber  = function(){
+			var i = 1;
+			$( '#add-records-table tbody tr' ).each(function(){
+				$(this).find('td:eq(0)').text(i);
+				i++;
+			});
+		}
+
+		//移除行
+		var removeTr = function( _this , id , value ){
+			$(_this).parents('tr').remove();
+		    res.splice($.inArray( value , res ),1);
+		
+		}
+
+		//保存数据
+		var saveData = function(){
+
+			//let url = '{:url("admin/update/saveRecords")}';
+			let url = '<?php echo cmf_get_domain()."/".cmf_get_extra_dir()."/update/records.php"; ?>';
+
+			let updateType = $('#issselecttype option:selected').val();
+			let version = $('input[name=version]').val();
+			if( updateType == 1  ){
+				//如果是选择文件更新,判断是否选择有文件
+				if( selectfile == null ){
+					layer.msg('请选择需要更新的文件!', { icon : 5 });
+					return false;
+				}
+			}else if( updateType == 2 ) {
+				//如果是更新框架  判断是否填写版本号
+				if( version.length == 0 ){
+					layer.msg( '请填写更新版本号!' , { icon : 5 });
+					return false;
+				}
+			}
+			let versionName = $('input[name=versionName]').val();
+			if( versionName.length == 0 ){
+				layer.msg( '请填写更新包名称!' , { icon : 5 });
+				return false;
+			}
+			
+
+			let lastVersion = $('input[name=version]').data('lastversion');
+
+			//更新内容
+			var content = $('#update-content-area').val();
+			if( $.trim( content ).length  == 0  ){
+				layer.msg('请填写更新的内容!' , { icon : 5 } );
+				return false;
+			}
+			//页面层-自定义
+			var openIndex = layer.open({
+				type: 1,
+				id:'online-bar',
+				title: false,
+				closeBtn: 0,
+				shadeClose: false,
+				area:['200px','100px'],
+				skin: '',
+				content: '<div style="line-height:100px;text-align:center;">打包中...,请勿操作!</div>'
+			});
+			$.post( url , {data:selectfile ,version:version , lastVersion : lastVersion , versionName:versionName , type:updateType , content:content } ,function( data ){
+				layer.close(openIndex);
+
+				data = JSON.parse(data);
+				let icon  = ( data.status == 'success' ) ? 1 : 5;  
+				layer.msg( data.message  , { icon : icon } );
+				if( data.status == 'success' ){
+					//上传更新包
+					$.post( '{:url("admin/update/uploadPackage")}' , { name : data.data.packageName , version : version , content: data.data.content , type : updateType } ,function( res ){
+					} );
+					//下载更新包
+					//iframe层-父子操作
+					layer.open({
+						type: 2,
+						title:'压缩包下载',
+						area: ['700px', '450px'],
+						fixed: false, //不固定
+						maxmin: true,
+						btn:['关闭'],
+						content: '{:url("admin/update/downLoad")}?name='+data.data.packageName,
+						end:function(){
+							window.location.reload();
+						}
+					});
+				}
+				
+			} );	
+		}
+		//
+	</script>
+</body>
+</html>

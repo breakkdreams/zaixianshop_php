@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>运费模块</title>
+    <include file='public/head'>
+        <style>
+            table th, table td{text-align: center;}
+            .ml-10 { margin-left: 10px; }
+        </style>
+</head>
+<body>
+    
+    <div class="wrap js-check-wrap">
+
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="{:cmf_plugin_url('Freight://freight/index')}">运费模板</a></li>
+            <li><a href="{:cmf_plugin_url('Freight://freight/config_index')}">运费配置</a></li>
+        </ul>
+
+
+    <form >
+        <table class="table table-bordered table-hover" zIndex="100">
+            <thead>
+                <tr class="theader">  
+                    <th>ID</th>
+                    <th>模板名称</th>
+                    <th>计费规则</th>
+                    <th>首件</th>
+                    <th>首费</th>
+                    <th>续件</th>
+                    <th>续费</th>
+                    <th>操作 &nbsp;
+	                    <a href="javascript:;" class="btn btn-success btn-sm add-config-btn" onclick="addFreight();">
+	                    	<i class="fa fa-plus-circle normal"></i> 添加运费模板
+	                    </a>
+                	</th>
+                </tr>
+            </thead>
+            <tbody>
+            	<volist name="data" id="vo">
+                <tr>
+                    <td >{$vo.id}</td>
+                    <td >{$vo.title}</td>
+                    <td >
+                        <if condition="$vo.type eq 1">
+                        	包邮
+                        <else>
+                        	按件数
+           				</if>
+                	</td>
+                    <td >{$vo.default_num}</td>
+                    <td >{$vo.default_price}</td>
+                    <td >{$vo.continue_num}</td>
+                    <td >{$vo.continue_price}</td>
+                    <td>
+<!--                        <a class="btn btn-sm btn-success  " onclick="editDemo({$vo.id})">修改</a>-->
+                        <a class="btn btn-sm btn-info " onclick="detailFreight({$vo.id})">查看</a>
+                        <a href="{:cmf_plugin_url('Freight://freight/deleteFreight')}?id={$vo.id}"  class="btn btn-sm btn-danger js-ajax-delete" data-msg="确定删除吗？">删除</a>    <!-- delete变为deleteMember方法 -->
+                    </td>
+                </tr>
+                </volist>
+            </tbody>
+        </table>
+    <div class="pagination">{$page|default=''}</div>
+
+    </form>
+    </div>
+
+
+
+
+
+<include file='public/scripts'>
+<script src="__STATIC__/js/layer/layer.js"></script>
+<script src="__STATIC__/js/custom/custom.js"></script>
+
+<!-- 弹出层 -->
+<script type="text/javascript">
+
+    /**
+     * 添加运费模板
+     */
+    function addFreight(){
+        let addpage_url = "{:cmf_plugin_url('Freight://freight/addFreightPage')}";
+        let add_url = "{:cmf_plugin_url('Freight://freight/addFreight')}";
+        layer.open({
+            type: 2,
+            title: '添加',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['1000px', '800px'],
+            // btn:['提交','关闭'],
+            fixed:false,
+            content: addpage_url, //iframe的url
+            yes:function(index, layero){
+                var body = layer.getChildFrame('body', index);
+                parentInfo = window["layui-layer-iframe" + index].callbackdata();
+            }
+        });
+    }
+
+    /**
+     * 查看
+     */
+    function detailFreight(data){
+    	console.log(data);
+        let url = "{:cmf_plugin_url('Freight://freight/detailFreightPage')}?id="+data;
+
+        layer.open({
+            type: 2,
+            title: '查看信息',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['1000px', '800px'],
+            btn:['关闭'],
+            fixed:false,
+            content: url
+        });
+    }
+
+
+</script>
+
+
+
+</body>
+</html>

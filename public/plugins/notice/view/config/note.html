@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <include file="public/head"/>
+    <title>短信配置</title>
+    <meta name="description" content="留言板后台管理">
+    <meta name="keywords" content="留言板后台管理">
+</head>
+
+<style type="text/css">
+    .clears{ clear:both;}
+    /*messages*/
+    .messages{padding:15px 0;}
+    .messages input,.messages select,.messages textarea{margin:0;padding:0; background:none; border:0; font-family:"Microsoft Yahei";}
+    .messlist {height:30px;margin-bottom:10px;}
+    .messlist label{float:left;width:100px; height:30px; font-size:14px; line-height:30px; text-align:right;padding-right:10px;}
+    .messlist input{float:left;width:300px;height:30px;padding-left:5px;border:#bbb 1px solid;}
+    .messlist.textareas{ height:auto;}
+    .messlist textarea{float:left;width:400px; height:110px;padding:5px;border:#ccc 1px solid;}
+    .messlist.yzms input{width:100px;}
+    .messlist.yzms .yzmimg{ float:left;margin-left:10px;}
+    .messsub{padding:0px 0 0 110px;}
+    .messsub input{width:100px; height:35px; background:#ddd; font-size:14px; font-weight:bold; cursor:pointer;margin-right:5px}
+    .messsub input:hover{ background:#f60;color:#fff;}
+    .row{margin: 0;margin-top: 20px;}
+    .active01{color: #2C3E50 !important;}
+    .border{border: none !important;}
+
+</style>
+
+<style>
+    form .input-order {
+        margin-bottom: 0px;
+        padding: 0 2px;
+        width: 42px;
+        font-size: 12px;
+    }
+
+    form .input-order:focus {
+        outline: none;
+    }
+
+    .table-actions {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        padding: 0px;
+    }
+
+    .table-list {
+        margin-bottom: 0px;
+    }
+
+    .form-required {
+        color: red;
+    }
+
+    .newa:hover{color: #000;/*#18BC9C;*/}
+</style>
+
+<div class="wrap">
+    <div class="nav01">
+        <ul class="nav nav-tabs">
+            <php> $currentTab = 8 ;</php>
+            <include file="public/nav" />
+        </ul>
+    </div>
+    
+    <div class="row">
+        <div class="span6">
+
+            <div style="clear: both; height: 20px;"></div>
+            <a href="{:cmf_plugin_url('Notice://Config/index')}" class="btn btn-sm newa">邮箱配置</a>
+            <a href="{:cmf_plugin_url('Notice://Config/note')}" class="btn btn-info btn-sm add-config-btn">短信配置</a>
+            <a href="{:cmf_plugin_url('Notice://Config/personalPush')}" class="btn btn-sm newa">个推配置</a>
+            <a href="{:cmf_plugin_url('Notice://Config/InMail')}" class="btn btn-sm newa">站内信配置</a>
+
+            <form class="form-horizontal js-ajax-form margin-top-20" role="form" method="post"
+                  action="{:cmf_plugin_url('Notice://Config/noteMsg');}">
+                <div class="form-group">
+                    <label for="input-link_id" class="col-sm-2 control-label">是否开启阿里云短信接口</label>
+                    <div class="col-md-6 col-sm-10">
+                        <input name="mail_off2" type="radio" value="1" <?php if($data['mail_off2']==1){echo 'checked';}?> >开
+                        <input name="mail_off2" type="radio" value="2" <?php if($data['mail_off2']==2){echo 'checked';}?> >关
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-link_title" class="col-sm-2 control-label">用户id</label>
+                    <div class="col-md-6 col-sm-10"><input type="text" class="form-control valid" oninput = "value=value.replace(/[^\d]/g,'')" id="input-link_title" name="id" value="{$data.id}"/></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-link_title" class="col-sm-2 control-label">产品帐号</label>
+                    <div class="col-md-6 col-sm-10"><input type="text" class="form-control valid" id="input-link_title" name="paccount" value="{$data.paccount}"/></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-link_title" class="col-sm-2 control-label">产品密码</label>
+                    <div class="col-md-6 col-sm-10"><input type="text" class="form-control valid" id="input-link_title" name="ppassword" value="{$data.ppassword}"/></div>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="input-link_title" class="col-sm-2 control-label">短信签名</label>
+                    <div class="col-md-6 col-sm-10"><input type="text" class="form-control valid" id="input-link_title" name="sign" value="{$data.sign|default=''}"/></div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <input type="hidden" name="status" value="1">
+                        <button class="btn btn-primary js-ajax-submit">提交</button>
+                        <input type="reset" class="btn btn-default" value="重填"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<include file="public/scripts"/>
