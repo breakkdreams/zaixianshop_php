@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>编辑栏目</title>
+    <link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+    <include file='public/head'>
+        <style>
+            table th, table td{text-align: center;}
+            .ml-10 { margin-left: 10px; }
+			.layui-icon{font-size: 14px !important;}
+			.layui-form-label{ width: auto;}
+			.layui-btn.layui-btn-sm .fa{ font-size: 14px !important;}
+			.mr4{ margin-right: 4px;}
+			.layui-form-item{ margin-bottom: 0px;}
+			.row{ margin: 0 !important;}
+			.form-horizontal .form-group { margin: 0 0 15px 0}
+        </style>
+</head>
+<body>
+	
+    <div id="main" role="main">
+        <div class="tab-content tab-addtabs">
+			<div id="content">
+				<div class="row">
+					<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+						<div class="content">
+							<form id="add-form "  class="form-horizontal nice-validator n-default n-bootstrap form">
+							<!-- <form method="POST" class="js-ajax-form  form" id="form" action="{:cmf_plugin_url('SiteConfiguration://admin_index/editSetting')}"> -->
+								<h2></h2>
+								<input type="hidden" value="{$data.id}" name="id" >
+								<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">栏目名称:</label>
+									<div class="col-xs-12 col-sm-8">
+										<input class="form-control" name="name" type="text" value="{$data.type_name}" required="required">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">栏目跳转链接:</label>
+									<div class="col-xs-12 col-sm-8">
+										<input class="form-control" name="jump" type="text" value="{$data.jump_url}" placeholder="（外链以http开头例  https://www.baidu.com/" required="required">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">栏目归属:</label>
+									<div class="col-xs-12 col-sm-8">
+										<if condition="$data.type eq 1" />
+											<input type="hidden" name="type" value="1" />
+											<input class="form-control" type="text"  disabled="disabled"  value="APP端">
+										<elseif condition="$data.type eq 2">
+											<input type="hidden" name="type" value="2" />
+											<input class="form-control" type="text"  disabled="disabled"  value="WEB端" />
+										</elseif>
+										</if>
+									</div>
+								</div>
+								
+								
+
+								<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">栏目图像:</label>
+									<div class="col-xs-12 col-sm-8">
+										<div class="input-group"><!-- hidden -->
+											<div class="layui-form-item" style="margin-top:1px;" >
+												<input  id="picture" name="picture" type="hidden"  value="">
+									            <img src="{$data.img_url}" style="text-align:center;height:200px;"  id="editimg" name="editimg" name="" alt="" >
+									    	</div>
+										    <button type="button" class="layui-btn" id="test1">
+											<i class="fa fa-upload"></i>上传图片
+											</button>
+											<span class="msg-box n-right"></span>
+										</div>
+										<ul class="row list-inline plupload-preview" id="image_list"></ul>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="control-label col-xs-12 col-sm-2">栏目状态:</label>
+									<div class="col-xs-12 col-sm-8">
+										<!-- <input name="status" type="hidden"  value="2">
+										<input class="form-control" type="text"  disabled="disabled"  value="备用"> -->
+										<select type="text" name="status" class="form-control">
+								            <option value="1" <?php if($data['status']==1){echo 'selected'; } ?>  >使用中</option>
+								            <option value="2" <?php if($data['status']==2){echo 'selected'; } ?>  >备用</option>
+								        </select>
+									</div>
+									
+								</div>
+														
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <script src="__STATIC__/js/layui/layui.all.js" charset="utf-8"></script>
+	<script src="__STATIC__/js/jquery.js" charset="utf-8"></script>
+	<include file='public/scripts'>
+
+<script>
+layui.use('upload', function(){
+  var upload = layui.upload;
+  data = new FormData();
+
+  console.log(data);
+  //执行实例
+  var uploadInst = upload.render({
+    elem: '#test1' //绑定元素
+    ,url: "{:cmf_plugin_url('HomeConfiguration://admin_index/uprwImage')}" //上传接口
+    ,data: data
+    ,done: function(res){
+    	console.log(res.data);
+    	console.log('AAA');
+    	$('.form').find("input[name=picture]").val(res.data);
+   		$('.form').find('#editimg').attr('src',"__ROOT__"+res.data);
+      //上传完毕回调
+    }
+    ,error: function(){
+      //请求异常回调
+    }
+  });
+});
+</script>
+
+</body>
+</html>
+

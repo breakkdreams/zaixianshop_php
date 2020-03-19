@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>会员管理</title>
+    <include file='public/head'>
+	<link rel="stylesheet" href="__STATIC__/css/layui.css"  media="all">
+	<style>
+		a{color:#18BC9C;}
+		/*table th, table td{text-align: center;}
+        .ml-10 { margin-left: 10px; }*/
+        .newa:hover{color: #000;/*#18BC9C;*/}
+	</style>
+</head>
+<body>
+    	
+	<div class="wrap js-check-wrap">
+        <ul class="nav nav-tabs">
+            <php> $currentTab = 4 ;</php>
+            <include file="public/nav" />
+        </ul>
+        <br>
+
+
+        <a href="javascript:;" class="btn btn-success btn-big add-config-btn" onclick="addRecom();">
+            <i class="fa fa-plus-circle normal"></i> 添加新热门推荐
+        </a>
+        <div style="clear: both; height: 10px;"></div>
+        <a href="{:cmf_plugin_url('HomeConfiguration://recom/index')}"   class="btn btn-default btn-sm add-config-btn" >APP端</a>
+        <a href="{:cmf_plugin_url('HomeConfiguration://recom/webRecom')}" class="btn btn-sm newa" >WEB端</a>
+		<div style="clear: both; height: 10px;"></div>  
+
+		<form class="well form-inline margin-top-20" action="{:cmf_plugin_url('HomeConfiguration://recom/index')}" method="post">
+	        <select type="text" name="stype" class="form-control">
+	            <option value="1"  >热门推荐名称</option>
+	        </select>
+            <input type="text" class="form-control" name="keyword" style="width:200px;" value="{$keyword|default=''}" placeholder="输入关键词"/>
+	        <input type="submit" class="btn btn-primary" value="搜索" />
+	    </form>
+
+
+
+
+
+	    <form id="dara" >
+        <table class="table table-bordered table-hover" style="text-align:center;" zIndex="100">
+            <thead>
+                <tr class="theader">
+                    <th style="text-align:center;">
+                        <input onclick="selectAll()" type="checkbox"  name="controlAll" style="controlAll" id="controlAll">
+                    </th>
+                    <th style="text-align:center;width:10%;">热门推荐ID</th>
+                    <th style="text-align:center;width:10%;">排序</th>
+                    <th style="text-align:center;">热门推荐名称</th>
+                    <th style="text-align:center;">热门推荐图标</th>
+                    <th style="text-align:center;">热门推荐跳转链接（外链以http开头例  https://www.baidu.com/）</th>
+                    <th style="text-align:center;">热门推荐归属</th>
+                    <th style="text-align:center;">状态</th>
+                    <th style="text-align:center;">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            <volist name="data" id="vo" >
+                <tr> 
+                    <td>
+                        <input class="checkboxes" type="checkbox"  value="{$vo.id}" name="selected">
+                    </td>
+                    <td >{$vo.id}</td>
+                    <td ><input type="text" class="sort" id="{$vo.id}"  style="width:40%;text-align:center;" value="{$vo.sort}" oninput = "value=value.replace(/[^\d]/g,'')"></td>
+                    <td >{$vo.recom_name}</td>
+                    <td >
+                        <img style=" width: 50px;height:50px; text-align: center;" src="{$vo.img_url}">
+                    </td>
+                    
+                    <td style="display:flex">
+                    <input id="z{$vo.id}" type="text" class="form-control" value="{$vo.jump_url}">
+                    <button class="btn " style="width:20%;"  data-clipboard-target="#z{$vo.id}">
+                    Copy
+                    </button>
+
+                    </td>     
+                      
+                    <td >APP端</td>        
+                    <td >
+                        <if condition="$vo.status eq 1">
+                        <a style="text-decoration:none;color:orange;">使用中</a>
+                        <elseif condition="$vo.status eq 2">
+                        <a style="text-decoration:none;color:gray;">备用</a>
+                        </elseif>
+                        <else>
+                        </else>
+                        </if>  
+                    </td>
+                    <td>
+                        <a class="btn btn-sm btn-success  " onclick="editRecom({$vo.id})">修改</a>
+                        <a href="{:cmf_plugin_url('HomeConfiguration://recom/delRecom')}?id={$vo.id}"    class="btn btn-sm btn-danger js-ajax-delete" data-msg="确定删除吗？">删除</a>  
+                    </td>
+                </tr>
+            </volist>
+
+            </tbody>
+
+        </table>
+
+    <!-- <div class="pagination">{$page|default=''}</div> -->
+        <div >
+            <a class="btn btn-sm  btn-primary " onclick="sort()">排序</a>
+            <a href="javascript:;" class="btn btn-sm btn-danger radius" onclick="del_all();"> 批量删除</a>
+        </div>
+        <div class="pagination">{$page|default=''}</div>
+    </form>
+        
+
+
+	</div>
+<script src="__STATIC__/js/layui/layui.all.js" charset="utf-8"></script>
+<script src="__STATIC__/js/jquery.js" charset="utf-8"></script>
+<script src="__PLUGIN_TMPL__/public/js/clipboard/clipboard.min.js" charset="utf-8" ></script>
+<include file="public/scripts"/>
+<!-- 弹出层 -->
+<script type="text/javascript">
+
+    /**
+     * 添加热门推荐
+     */
+    function addRecom(){
+        let addpageurl = "{:cmf_plugin_url('HomeConfiguration://recom/addRecomPage')}?type=1";
+        let addurl = "{:cmf_plugin_url('HomeConfiguration://recom/addRecom')}";
+        layer.open({
+            type: 2,
+            title: '添加热门推荐',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['800px', '500px'],
+            btn:['提交','关闭'],
+            fixed:false,
+            content: addpageurl, //iframe的url
+            yes:function(index, layero){
+                var body = layer.getChildFrame('body', index); 
+
+                //parentInfo = window["layui-layer-iframe" + index].callbackdata();
+                //console.log(parentInfo);
+
+
+                
+                var name = body.find('input[name=name]').val();
+                var jump = body.find('input[name=jump]').val();
+                var type = body.find('input[name=type]').val();
+                var picture = body.find('input[name=picture]').val();
+                var status = body.find('input[name=status]').val();
+                //alert(cstaus);
+
+                if(name==''){
+                    layer.msg('热门推荐名称不可为空', function(){
+                    });
+                    return false;
+                }
+                if(picture==''){
+                    layer.msg('图像不可为空', function(){
+                    });
+                    return false;
+                }
+                if(jump==''){
+                    layer.msg('跳转链接不可为空', function(){
+                    });
+                    return false;
+                }
+                
+                $.ajax({   
+                    url:addurl,
+                    type:'post',
+                    data:{  
+                           name : name,  
+                           jump : jump,  
+                           type : type,  
+                           picture : picture,
+                           status : status,
+                    },  
+                    dataType:'json',
+                    success:function(datas){
+                        console.log(datas);
+                        console.log('datas');
+                        if(datas.status=='success'){
+                            layer.msg(datas.message,{time:1500},function(){
+                                layer.closeAll();
+                                window.location.reload(); 
+                            });
+                        }else if(datas.status=='error'){
+                            console.log('BB');
+                            layer.msg(datas.message);
+                        }
+                    },
+                    error:function(data){
+                        layer.msg('添加失败');
+                        return false;
+                    }
+                })
+            }
+
+        });
+    }
+</script>
+<script type="text/javascript">
+
+    /**
+     * 修改热门推荐
+     */
+    function editRecom(data){
+        let addpageurl = "{:cmf_plugin_url('HomeConfiguration://recom/editRecomPage')}?id="+data;
+        let addurl = "{:cmf_plugin_url('HomeConfiguration://recom/editRecom')}";
+        layer.open({
+            type: 2,
+            title: '修改热门推荐',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['800px', '500px'],
+            btn:['提交','关闭'],
+            fixed:false,
+            content: addpageurl, //iframe的url
+            yes:function(index, layero){
+                var body = layer.getChildFrame('body', index); 
+
+                //parentInfo = window["layui-layer-iframe" + index].callbackdata();
+                //console.log(parentInfo);
+
+
+                
+                var name = body.find('input[name=name]').val();
+                var type = body.find('input[name=type]').val();
+                var picture = body.find('input[name=picture]').val();
+                var jump = body.find('input[name=jump]').val();
+                var id = body.find('input[name=id]').val();
+                var status = body.find('select[name=status]').val();
+                // alert(status);
+
+                if(name==''){
+                    layer.msg('热门推荐名称不可为空', function(){
+                    });
+                    return false;
+                }
+                if(id==''){
+                    layer.msg('ID不可为空', function(){
+                    });
+                    return false;
+                }
+                // if(picture==''){
+                //     layer.msg('图像不可为空', function(){
+                //     });
+                //     return false;
+                // } 
+                
+                $.ajax({   
+                    url:addurl,
+                    type:'post',
+                    data:{  
+                           id : id,  
+                           name : name,  
+                           jump : jump,  
+                           type : type,  
+                           picture : picture,
+                           status : status,
+                    },  
+                    dataType:'json',
+                    success:function(datas){
+                        console.log(datas);
+                        console.log('datas');
+                        if(datas.status=='success'){
+                            layer.msg(datas.message,{time:1500},function(){
+                                layer.closeAll();
+                                window.location.reload(); 
+                            });
+                        }else if(datas.status=='error'){
+                            console.log('BB');
+                            layer.msg(datas.message);
+                        }
+                    },
+                    error:function(data){
+                        layer.msg('添加失败');
+                        return false;
+                    }
+                })
+            }
+
+        });
+    }
+</script>
+<script>
+//页面层
+function sort(){
+    console.log('VVV');
+    var list = $('#dara').find(".sort");
+    var data=new Array();
+    var key=new Array();
+    var value=new Array();
+    console.log(list);
+    for(var i=0;i<list.length && list[i];i++)
+    {
+        key[i] = list[i].id;
+        value[i] = list[i].value;
+    }
+
+    $.ajax({
+        url:"{:cmf_plugin_url('HomeConfiguration://recom/recomSort')}?key="+key+'&value='+value,
+        data:data,
+        success:function(data){
+            if(data.type=='success'){
+                window.location.reload();
+            }else if(data.type=='error'){
+                layer.msg('排序失败');
+            }
+        },
+        error:function(data){
+            layer.msg('排序失败');
+            return false;
+        }
+    })
+
+}
+</script>
+
+<script>
+    //必须要初始化 第一种初始化
+    var clipboard = new ClipboardJS('.btn');
+    clipboard.on('success', function(e) {
+        console.log(e);
+    });
+    clipboard.on('error', function(e) {
+        console.log(e);
+    });
+</script>
+
+
+<script>
+    //全选删除
+    function selectAll(){
+    var checklist = document.getElementsByName ("selected");
+    if(document.getElementById("controlAll").checked)
+    {
+        for(var i=0;i<checklist.length;i++)
+        {
+            checklist[i].checked = 1;
+        }
+        }else{
+        for(var j=0;j<checklist.length;j++)
+        {
+            checklist[j].checked = 0;
+        }
+    }
+    }
+
+    var str=document.getElementsByName("selected");
+    var objarray=str.length;
+    var chestr="";
+    for (i=0;i<objarray;i++)
+    {
+        if(str[i].checked == true)
+        {
+            chestr+=str[i].value+",";
+        }
+    }
+    console.log(chestr);
+</script>
+<script>
+    function del_all(){
+        var del_url = "{:cmf_plugin_url('HomeConfiguration://recom/allDelete')}";
+        console.log('A');
+        var a = confirm('您确定要删除这条数据吗?');
+        if(a){
+            var question_class_ids = '';
+            var count = 0;
+            $('input[name="selected"]:checked').each(function(){
+                count ++;
+                question_class_ids += $(this).val() + ',';
+            });
+            console.log(count);
+            console.log(question_class_ids);
+            if (!count) {
+                alert('对不起，请选择至少一项进行删除！');
+                return;
+            }
+        }
+        question_class_ids = question_class_ids.substr(0, question_class_ids.length - 1);
+        $.ajax({
+            url:del_url,
+            data:{ids:question_class_ids},
+            success:function(data){
+                console.log(data);
+                if(data.type=='success'){
+                    layer.msg(data.msg,{time:2000},function(){
+                        window.location.reload();//刷新页面
+                    });
+                }else if(data.type=='error'){
+                    layer.msg(data.msg);
+                }
+            },
+            error:function(data){
+                console.log(data);
+                layer.msg('修改失败');
+                return false;
+            }
+        })
+    }
+</script>
+</body>

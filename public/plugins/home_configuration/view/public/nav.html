@@ -1,0 +1,19 @@
+
+<!-- ****************************************************************** -->
+<style>
+	a{color:#18BC9C;}
+</style>
+
+
+<if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/HomeConfiguration/admin_index/index')">
+	<li <?php if( $currentTab == 1 ) echo 'class="active"';?> ><a href="{:cmf_plugin_url('HomeConfiguration://admin_index/index')}">皮肤选择</a></li>
+</if>
+<if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/HomeConfiguration/carousel/index')">
+	<li <?php if( $currentTab == 2 ) echo 'class="active"';?> ><a href="{:cmf_plugin_url('HomeConfiguration://carousel/index')}">轮播图选择</a></li>
+</if>
+<if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/HomeConfiguration/type/index')">
+	<li <?php if( $currentTab == 3 ) echo 'class="active"';?> ><a href="{:cmf_plugin_url('HomeConfiguration://type/index')}">栏目选择</a></li>
+</if>
+<if condition="cmf_auth_check(cmf_get_current_admin_id(),'plugin/HomeConfiguration/recom/index')">
+	<li <?php if( $currentTab == 4 ) echo 'class="active"';?> ><a href="{:cmf_plugin_url('HomeConfiguration://recom/index')}">热门推荐选择</a></li>
+</if>
