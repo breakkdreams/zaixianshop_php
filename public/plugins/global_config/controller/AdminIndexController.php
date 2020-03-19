@@ -1,5 +1,5 @@
 <?php
-namespace plugins\freight\controller;
+namespace plugins\global_config\controller;
 
 use cmf\controller\PluginAdminBaseController;//引入此类
 use think\Db;
@@ -21,19 +21,19 @@ class AdminIndexController extends PluginAdminBaseController
 
     /**
      * @adminMenu(
-     *     'name'   => '运费模块',
+     *     'name'   => '配置模块',
      *     'parent' => 'admin/Plugin/default',
      *     'display'=> true,
      *     'hasView'=> true,
      *     'order'  => 1000,
      *     'icon'   => '',
-     *     'remark' => '运费模块',
+     *     'remark' => '配置模块',
      *     'param'  => ''
      * )
      */
     public function index()
     {
-        $demo = new \plugins\freight\controller\GlobalConfigController();
+        $demo = new \plugins\global_config\controller\CrowdFundingController();
         return $demo->index();
     }
 

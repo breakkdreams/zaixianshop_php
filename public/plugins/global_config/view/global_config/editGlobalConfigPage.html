@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>修改配置</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+    <include file='public/head'>
+</head>
+<body>
+    <div class="wrap js-check-wrap" id="addFormJt">
+        <div id="app" v-cloak>
+            <table class="table table-bordered table-hover"  style="text-align:center;">
+                <tr>
+                    <td class="td-head">配置名称</td>
+                    <td class="td-body">
+                        <input type="text" class="form-control" required name="title" maxlength="20" v-model="title" placeholder="输入配置名称" disabled="disabled">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-head">配置数值</td>
+                    <td class="td-body">
+                        <input type="text" class="form-control" required name="content" maxlength="20" v-model="content" placeholder="输入配置数值">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="td-head">配置描述</td>
+                    <td class="td-body">
+                        <input type="text" class="form-control" required name="describe" v-model="describe" placeholder="输入描述内容">
+                    </td>
+                </tr>
+            </table>
+
+            <div style="text-align: center;">
+                <button style="background-color: #2e8ded;color: white;border: #2e8ded;padding: 5px 10px" @click="sub_form">提交</button>
+                <button style="background-color: #F1F1F2;border: #F1F1F2;padding: 5px 10px;margin-left: 10px;" @click="close_form">关闭</button>
+            </div>
+
+            </div>
+    </div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<include file="public/scripts"/>
+<script src="__STATIC__/js/layer/layer.js"></script>
+
+
+
+<script type="text/javascript">
+    let title_detail = '{$data.title}';
+    let content_detail = '{$data.content}';
+    let describe_detail = '{$data.describe}';
+    let id_detail = '{$data.id}';
+    let app = new Vue({
+        el: '#app',
+        data() {
+            return {
+                title:title_detail,//配置名称
+                content:content_detail,//计费类型
+                describe:describe_detail,//描述
+                id:id_detail,//id
+            }
+        },
+        methods: {
+            //提交弹窗
+            sub_form(){
+                let content = this.content;
+                let describe = this.describe;
+                let id = this.id;
+
+                if(id == '' || content == '' || describe == ''){
+                    alert('请将参数填写完整');
+                    return false;
+                }
+                let add_url = "{:cmf_plugin_url('GlobalConfig://global_config/editGlobalConfig')}";
+                $.ajax({
+                    url: add_url,
+                    data: {
+                        'id':id,
+                        'content':content,
+                        'describe':describe
+                    },
+                    dataType: "json",
+                    type: "post",
+                    success: function(res) {
+                        console.log(res);
+                        if(res.code='200'){
+                            let index = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(index);
+                            parent.location.reload();
+                        }else{
+                            alert(res.message);
+                        }
+
+                    }
+                });
+            },
+            //关闭弹窗
+            close_form(){
+                let index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);
+                parent.location.reload();
+            },
+        },
+
+    });
+
+</script>
+
+</body>
+</html>

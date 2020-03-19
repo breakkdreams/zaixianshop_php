@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>运费模块</title>
+    <include file='public/head'>
+        <style>
+            table th, table td{text-align: center;}
+            .ml-10 { margin-left: 10px; }
+        </style>
+</head>
+<body>
+    
+    <div class="wrap js-check-wrap">
+
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="{:cmf_plugin_url('GlobalConfig://global_config/index')}">配置信息</a></li>
+        </ul>
+
+
+    <form >
+        <table class="table table-bordered table-hover" zIndex="100">
+            <thead>
+                <tr class="theader">  
+                    <th>ID</th>
+                    <th>配置名称</th>
+                    <th>配置数值</th>
+                    <th>配置描述</th>
+                    <th>操作 &nbsp;
+	                    <a href="javascript:;" class="btn btn-success btn-sm add-config-btn" onclick="addGlobalConfig();">
+	                    	<i class="fa fa-plus-circle normal"></i> 添加配置
+	                    </a>
+                	</th>
+                </tr>
+            </thead>
+            <tbody>
+            	<volist name="data" id="vo">
+                <tr>
+                    <td >{$vo.id}</td>
+                    <td >{$vo.title}</td>
+                    <td >{$vo.content}</td>
+                    <td >{$vo.describe}</td>
+                    <td>
+                        <a class="btn btn-sm btn-info " onclick="editGlobalConfig({$vo.id})">修改</a>
+                    </td>
+                </tr>
+                </volist>
+            </tbody>
+        </table>
+    <div class="pagination">{$page|default=''}</div>
+
+    </form>
+    </div>
+
+
+
+
+
+<include file='public/scripts'>
+<script src="__STATIC__/js/layer/layer.js"></script>
+<script src="__STATIC__/js/custom/custom.js"></script>
+
+<!-- 弹出层 -->
+<script type="text/javascript">
+
+    /**
+     * 添加配置
+     */
+    function addGlobalConfig(){
+        let addPage_url = "{:cmf_plugin_url('GlobalConfig://global_config/addGlobalConfigPage')}";
+        layer.open({
+            type: 2,
+            title: '添加配置',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['800px', '500px'],
+            // btn:['提交','关闭'],
+            fixed:false,
+            content: addPage_url
+        });
+    }
+
+    /**
+     * 修改配置
+     */
+    function editGlobalConfig(id){
+        let editPage_url = "{:cmf_plugin_url('GlobalConfig://global_config/editGlobalConfigPage')}?id="+id;
+        layer.open({
+            type: 2,
+            title: '修改配置',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['800px', '500px'],
+            fixed:false,
+            content: editPage_url
+        });
+    }
+
+</script>
+
+
+
+</body>
+</html>

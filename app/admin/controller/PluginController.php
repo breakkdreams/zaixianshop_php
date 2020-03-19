@@ -393,8 +393,9 @@ class PluginController extends AdminBaseController
         //安装
         //模块菜单
         $author = new AuthorizationModel();
-        $res = $author->uploadMenu( $pluginName , $this->pluginModuleId );
-       
+//        $res = $author->uploadMenu( $pluginName , $this->pluginModuleId );
+        $res = 1;
+
         if( isset( $res['error'] ) ){
             $this->error( $res['message'] );
         }

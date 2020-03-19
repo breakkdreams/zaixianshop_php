@@ -401,7 +401,35 @@ class ApiIndexController extends PluginRestBaseController
                 return zy_array (false,'注册失败!','',-4,$isModule);
             }
 
+            //生成上下级关系
+            if(!empty($fid)){
+                $level['fid'] = $fid;
+                $level['uid'] = $re;
+                Db::name('member_level')->insert($level);
+            }
+
+            ///注册成功,获得原始股
+            //获取配置表 register_integral
+            $register_integral = 0;//原始股值
+            $globalData = Db::name('global_config')->where('title','register_integral')->find();
+            if(empty($globalData)){
+                $register_integral = $globalData['register_integral'];
+            }
+            $result = Db::name('member')->where('uid',$re)->update(['thigh'=>$register_integral]);
+            //添加记录
+            if($result){
+                $record['time'] = time();
+                $record['uid'] = $re;
+                $record['type'] = 1;
+                $record['integral'] = $register_integral;
+                $record['consumption'] = 0;
+                $record['proportion'] = $globalData['register_integral'];
+                Db::name('integral_record')->insert($record);
+            }
+
+
             $result = zy_userid_jwt($re)['data'];
+
             return zy_array (true,'注册成功!',$result,200,$isModule);
         } else {
             return zy_array (false,'请求错误!','',-100,$isModule);
@@ -417,6 +445,8 @@ class ApiIndexController extends PluginRestBaseController
         if ($this->request->isPost()) {
             $data = $this->request->post();
             $data = zy_decodeData($data,$isModule);
+
+            $fid = $data['fid'];
 
             // 验证 ============
             $result = $this->validate($data,'Member.mobileRegister');
@@ -469,6 +499,33 @@ class ApiIndexController extends PluginRestBaseController
             if(empty($re)){
                 return zy_array (false,'注册失败!','',-4,$isModule);
             }
+
+            //生成上下级关系
+            if(!empty($fid)){
+                $level['fid'] = $fid;
+                $level['uid'] = $re;
+                Db::name('member_level')->insert($level);
+            }
+
+            ///注册成功,获得原始股
+            //获取配置表 register_integral
+            $register_integral = 0;//原始股值
+            $globalData = Db::name('global_config')->where('title','register_integral')->find();
+            if(empty($globalData)){
+                $register_integral = $globalData['register_integral'];
+            }
+            $result = Db::name('member')->where('uid',$re)->update(['thigh'=>$register_integral]);
+            //添加记录
+            if($result){
+                $record['time'] = time();
+                $record['uid'] = $re;
+                $record['type'] = 1;
+                $record['integral'] = $register_integral;
+                $record['consumption'] = 0;
+                $record['proportion'] = $globalData['register_integral'];
+                Db::name('integral_record')->insert($record);
+            }
+
 
             $result = zy_userid_jwt($re)['data'];
             return zy_array (true,'注册成功!',$result,200,$isModule);
