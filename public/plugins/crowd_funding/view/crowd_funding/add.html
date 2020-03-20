@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>添加众彩商品</title>
+	<link href="__PLUGIN_TMPL__/public/assets/layui/css/layui.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="__PLUGIN_TMPL__/public/assets/css/element.css">
+<!--	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">-->
+	<style>
+		[v-cloak] {
+			display: none;
+		}
+		.avatar-uploader .el-upload {
+			border: 1px dashed #d9d9d9;
+			border-radius: 6px;
+			cursor: pointer;
+			position: relative;
+			overflow: hidden;
+		}
+		.avatar-uploader .el-upload:hover {
+			border-color: #409EFF;
+		}
+		.avatar-uploader-icon {
+			font-size: 28px;
+			color: #8c939d;
+			width: 178px;
+			height: 178px;
+			line-height: 178px;
+			text-align: center;
+		}
+		.avatar {
+			width: 178px;
+			height: 178px;
+			display: block;
+		}
+		.el-upload__input{
+			display: none !important;
+		}
+	</style>
+	<include file='public/head'>
+		</head>
+<body>
+<div class="wrap js-check-wrap" id="addFormJt">
+
+	<div id="app" v-cloak style="padding-left: 10%;padding-right: 10%;width: 60%;">
+		<a href="{:cmf_plugin_url('CrowdFunding://crowd_funding/index')}" class="btn btn-success btn-big add-config-btn">
+			<i class="fa normal"></i> 返回上一页
+		</a>
+		<a href="javascript:;" class="btn btn-info btn-big add-config-btn"  onclick="history.go(0)">
+			<i class="fa normal"></i> 刷新
+		</a>
+
+		<el-form ref="form" :model="form" label-position="left" label-width="150px" class="margin-top-20">
+			<el-form-item label="商品名称">
+				<el-input v-model="form.name"></el-input>
+			</el-form-item>
+			<el-form-item label="商品缩略图">
+<!--				<el-input v-model="form.img_path"></el-input>-->
+				<el-upload
+						class="avatar-uploader"
+						action="{:cmf_plugin_url('CrowdFunding://crowd_funding/uploadimg')}"
+						:show-file-list="false"
+						:on-success="handleAvatarSuccess"
+						:before-upload="beforeAvatarUpload">
+					<img v-if="imageUrl" :src="imageUrl" class="avatar">
+					<i v-else class="el-icon-plus avatar-uploader-icon"></i>
+				</el-upload>
+			</el-form-item>
+			<el-form-item label="商品轮播图">
+				<el-upload
+						action="{:cmf_plugin_url('CrowdFunding://crowd_funding/uploadimg&type=1')}"
+						list-type="picture-card"
+						:limit="4"
+						:multiple="true"
+						:on-success="imageInfoSuccess"
+						:on-remove="imageInfoRemove"
+						:on-exceed="checkImageInfo"
+						:on-preview="handlePictureCardPreview">
+					<i class="el-icon-plus"></i>
+				</el-upload>
+				<el-dialog :visible.sync="dialogVisible">
+					<img width="100%" :src="dialogImageUrl" alt="">
+				</el-dialog>
+			</el-form-item>
+			<el-form-item label="商品描述">
+				<el-input v-model="form.describe"></el-input>
+			</el-form-item>
+			<el-form-item label="众彩价格">
+				<el-input v-model="form.price" type="number"></el-input>
+			</el-form-item>
+			<el-form-item label="众彩份数">
+				<el-input v-model="form.num" type="number"></el-input>
+			</el-form-item>
+			<el-form-item label="开始时间-结束时间">
+				<el-date-picker
+						v-model="value2"
+						type="datetimerange"
+						:picker-options="pickerOptions"
+						@change="changeTimes"
+						range-separator="至"
+						start-placeholder="开始日期"
+						end-placeholder="结束日期"
+						value-format="timestamp"
+						align="right">
+				</el-date-picker>
+			</el-form-item>
+			<el-form-item label="是否首页显示">
+				<el-switch v-model="form.show_index"></el-switch>
+			</el-form-item>
+			<el-form-item label="上下架">
+				<el-switch v-model="form.sale"></el-switch>
+			</el-form-item>
+			<el-form-item label="众彩详情">
+<!--				<el-input v-model="form.info"></el-input>-->
+				<textarea id="demo" style="display: none;"></textarea>
+			</el-form-item>
+
+			<el-form-item>
+				<el-button type="primary" @click="onSubmit">立即创建</el-button>
+				<el-button>取消</el-button>
+			</el-form-item>
+
+		</el-form>
+	</div>
+</div>
+
+
+
+<script src="__PLUGIN_TMPL__/public/assets/layui/layui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="__PLUGIN_TMPL__/public/assets/js/element.js"></script>
+<include file="public/scripts"/>
+
+
+<script type="text/javascript">
+	var layedit,index;
+	layui.use('layedit', function(){
+		 layedit = layui.layedit;
+		layedit.set({
+			uploadImage: {
+				url: "{:cmf_plugin_url('CrowdFunding://crowd_funding/uploadEditImg')}" //接口url
+				,type: '' //默认post
+			}
+		});
+		index = layedit.build('demo', {
+			height: 500 //设置编辑器高度
+		}); //建立编辑器
+	});
+	function dateFormat(fmt, date) {
+		let ret;
+		const opt = {
+			"Y+": date.getFullYear().toString(),        // 年
+			"m+": (date.getMonth() + 1).toString(),     // 月
+			"d+": date.getDate().toString(),            // 日
+			"H+": date.getHours().toString(),           // 时
+			"M+": date.getMinutes().toString(),         // 分
+			"S+": date.getSeconds().toString()          // 秒
+			// 有其他格式化字符需求可以继续添加，必须转化成字符串
+		};
+		for (let k in opt) {
+			ret = new RegExp("(" + k + ")").exec(fmt);
+			if (ret) {
+				fmt = fmt.replace(ret[1], (ret[1].length == 1) ? (opt[k]) : (opt[k].padStart(ret[1].length, "0")))
+			};
+		};
+		return fmt;
+	}
+	let app = new Vue({
+		el: '#app',
+		data() {
+			return {
+				form: {
+					name: '',
+					img_path: '',
+					img_path_list: '',
+					describe: '',
+					price: '',
+					num: '',
+					start_time: '',
+					end_time: '',
+					info: '',
+					show_index: true,
+					sale: true,
+				},
+				dialogImageUrl: '',
+				dialogVisible: false,
+				imageUrl: '',
+				pickerOptions: {
+					shortcuts: [{
+						text: '最近一周',
+						onClick(picker) {
+							const end = new Date();
+							const start = new Date();
+							end.setTime(end.getTime() + 3600 * 1000 * 24 * 7);
+							picker.$emit('pick', [start, end]);
+						}
+					}, {
+						text: '最近一个月',
+						onClick(picker) {
+							const end = new Date();
+							const start = new Date();
+							end.setTime(end.getTime() + 3600 * 1000 * 24 * 30);
+							picker.$emit('pick', [start, end]);
+						}
+					}, {
+						text: '最近三个月',
+						onClick(picker) {
+							const end = new Date();
+							const start = new Date();
+							end.setTime(end.getTime() + 3600 * 1000 * 24 * 90);
+							picker.$emit('pick', [start, end]);
+						}
+					}]
+				},
+				value2: '',
+			}
+		},
+		methods: {
+			onSubmit() {
+				let that = this;
+				let is_sale = 0;//上下架
+				let is_show_index = 0;//首页显示
+				if(that.form.sale){
+					is_sale = 1;
+				}
+				if(that.form.show_index){
+					is_show_index = 1;
+				}
+				let info = layedit.getContent(index);//详情
+				let end_time = that.form.end_time;//结束时间
+				let start_time = that.form.start_time;//开始时间
+				let num = that.form.num;//众筹份数
+				let price = that.form.price;//价格
+				let describe = that.form.describe;//描述
+				let img_path_list = that.form.img_path_list;//轮播图
+				let img_path = that.form.img_path;//缩略图
+				let name = that.form.name;//产品名称
+				if(is_sale=='' || is_show_index=='' || info=='' || end_time=='' || start_time=='' || num=='' ||
+						price=='' || describe=='' || img_path_list=='' || img_path=='' || name==''){
+					this.$message.error('信息未填写完整');
+					return false;
+				}
+				let add_url = "{:cmf_plugin_url('CrowdFunding://crowd_funding/addCrowFunding')}";
+				$.ajax({
+					url: add_url,
+					data: {
+						'name':name,
+						'img_path':img_path,
+						'img_path_list':img_path_list,
+						'describe':describe,
+						'price':price,
+						'num':num,
+						'start_time':start_time,
+						'end_time':end_time,
+						'info':info,
+						'show_index':is_show_index,
+						'sale':is_sale
+					},
+					dataType: "json",
+					type: "post",
+					success: function(res) {
+						console.log(res);
+						if(res.code='200'){
+							window.location.href="{:cmf_plugin_url('CrowdFunding://crowd_funding/index')}";
+						}else{
+							this.$message.error(res.message);
+						}
+
+					}
+				});
+			},
+			//多图上传
+			handlePictureCardPreview(file) {
+				this.dialogImageUrl = file.url;
+				this.dialogVisible = true;
+			},
+			checkImageInfo(file) {
+				if(file.length>4){
+					this.$message.error('图片最多只能上传4张');
+				}
+			},
+			imageInfoSuccess(response, file, fileList){
+				let that = this;
+				if(response.code == 200){
+					if(that.form.img_path_list != ''){
+						that.form.img_path_list += ',';
+					}
+					that.form.img_path_list += response.data;
+				}
+			},
+			imageInfoRemove(file, fileList){
+				console.log(fileList)
+				let that = this;
+				that.form.img_path_list = '';
+				for (let i = 0; i <fileList.length ; i++) {
+					if(fileList[i].response.code == 200){
+						if(that.form.img_path_list != ''){
+							that.form.img_path_list += ',';
+						}
+						that.form.img_path_list += fileList[i].response.data;
+					}
+				}
+			},
+			//单图上传
+			handleAvatarSuccess(res, file) {
+				let that = this;
+				that.imageUrl = URL.createObjectURL(file.raw);
+				if(res.code == 200){
+					that.form.img_path = res.data;
+				}
+			},
+			beforeAvatarUpload(file) {
+				const isJPG = file.type === 'image/jpeg';
+				const isLt2M = file.size / 1024 / 1024 < 10;
+
+				if (!isJPG) {
+					this.$message.error('上传头像图片只能是 JPG 格式!');
+				}
+				if (!isLt2M) {
+					this.$message.error('上传头像图片大小不能超过 10MB!');
+				}
+				return isJPG && isLt2M;
+			},
+			//时间选择
+			changeTimes(){
+				let that = this;
+				if(this.value2!=''){
+					let start_time = this.value2[0];
+					let end_time = this.value2[1];
+					that.form.start_time = start_time;
+					that.form.end_time = end_time;
+				}
+
+			},
+		},
+
+	});
+
+</script>
+
+</body>
+</html>

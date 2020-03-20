@@ -3,7 +3,7 @@
 namespace plugins\crowd_funding;//Demo插件英文名，改成你的插件英文就行了
 use cmf\lib\Plugin;//必须引入此库
 /**Demo插件英文名，改成你的插件英文就行了 继承此库
- * @pluginInfo('name'=>'众筹模块','symbol'=>'CrowdFunding')
+ * @pluginInfo('name'=>'众彩模块','symbol'=>'CrowdFunding')
  */
 class CrowdFundingPlugin extends Plugin
 {
@@ -13,8 +13,8 @@ class CrowdFundingPlugin extends Plugin
      */
     public $info = [
         'name'        => 'CrowdFunding',//Demo插件英文名，改成你的插件英文就行了
-        'title'       => '众筹模块',
-        'description' => '众筹模块',
+        'title'       => '众彩模块',
+        'description' => '众彩模块',
         'status'      => 1,
         'author'      => 'wbd',
         'version'     => '1.0',

@@ -33,7 +33,7 @@ class AdminIndexController extends PluginAdminBaseController
      */
     public function index()
     {
-        $demo = new \plugins\global_config\controller\CrowdFundingController();
+        $demo = new \plugins\global_config\controller\GlobalConfigController();
         return $demo->index();
     }
 

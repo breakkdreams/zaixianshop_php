@@ -42,7 +42,7 @@ if ( $_SERVER['HTTPS'] == 'off' ) {
     define('ZY_HTTP', 'https://');
 }
 
-$newpathname = ZY_HTTP.$_SERVER["SERVER_NAME"].ZY_PORT.str_replace('index.php', '', $_SERVER["SCRIPT_NAME"]);
+$newpathname = 'http://'.$_SERVER["SERVER_NAME"].ZY_PORT.str_replace('index.php', '', $_SERVER["SCRIPT_NAME"]);
 define('ZY_APP_PATH', $newpathname);
 
 

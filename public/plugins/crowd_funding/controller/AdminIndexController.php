@@ -21,13 +21,13 @@ class AdminIndexController extends PluginAdminBaseController
 
     /**
      * @adminMenu(
-     *     'name'   => '众筹模块',
+     *     'name'   => '众彩模块',
      *     'parent' => 'admin/Plugin/default',
      *     'display'=> true,
      *     'hasView'=> true,
      *     'order'  => 1000,
      *     'icon'   => '',
-     *     'remark' => '众筹模块',
+     *     'remark' => '众彩模块',
      *     'param'  => ''
      * )
      */

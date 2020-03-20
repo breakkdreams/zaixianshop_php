@@ -1,5 +1,5 @@
 <?php
-namespace plugins\global_config\controller;
+namespace plugins\crowd_funding\controller;
 /**
  * @Author: user
  * @Date:   2019-03-07 16:21:19
@@ -7,7 +7,6 @@ namespace plugins\global_config\controller;
  * @Last Modified time: 2019-03-20 09:56:01
  */
 use cmf\controller\PluginRestBaseController;//引用插件基类
-use plugins\freight\Model\PluginApiIndexModel;
 use think\Db;
 
 /**
@@ -15,6 +14,7 @@ use think\Db;
  */
 class ApiIndexController extends PluginRestBaseController
 {
+
     public function index($isModule=false)//index(命名规范)
     {
         $param=$this->request->post();
@@ -22,6 +22,7 @@ class ApiIndexController extends PluginRestBaseController
 
         return zy_array(true,'连入成功',$param,200,$isModule);
     }
+
 
     /**
      * 店铺添加运费
