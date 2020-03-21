@@ -1487,13 +1487,12 @@ class ApiIndexController extends PluginRestBaseController
             }
 
             $result = zy_userid_jwt($uid);
-            if(!empty($dataz['data'])){
-                $result = ['uid'=>$uid];
+            if(!empty($result['data'])){
+                $result = ['uid'=>$result['data']['uid']];
             }
             return zy_array (true,'登录成功！',$result,200 ,false);
         }else{
-            $result = array('uid'=>$uid);
-            return zy_array (false,'登录失败！',$result,300 ,false);
+            return zy_array (false,'登录失败！','',300 ,false);
         }
     }
 
