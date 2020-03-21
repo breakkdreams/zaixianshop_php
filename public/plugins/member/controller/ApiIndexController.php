@@ -1392,10 +1392,8 @@ class ApiIndexController extends PluginRestBaseController
             }else if($user_info['sex'] == 2){
                 $sex = '女';
             }
-            $result = $this->wechatLogin($sex,$user_info['nickname'],$user_info['unionid'],$user_info['openid'],$user_info['headimgurl']);
-            return zy_array (true,'登录成功！',$result,200 ,false);
+            $this->wechatLogin($sex,$user_info['nickname'],$user_info['unionid'],$user_info['openid'],$user_info['headimgurl']);
         }
-        return zy_array (false,'登录失败！','',300 ,false);
     }
 
     public function GetOpenid($code)
@@ -1454,7 +1452,8 @@ class ApiIndexController extends PluginRestBaseController
         $data2 = Db::name('member_detail')->where(['wechat_unionid'=>$unionid])->find();
         if(empty($data2)){
             //新增
-            $info['username'] = $nickname;
+            $info['nickname'] = $nickname;
+            $info['username'] = cmf_random_string(8);
             $info['avatar'] = $headimgurl;
             $info['create_time'] = time();
             $info['last_login_time'] = time();
@@ -1473,7 +1472,7 @@ class ApiIndexController extends PluginRestBaseController
         }else{
             $uid = $data2['uid'];
             //更新
-            $info['username'] = $nickname;
+            $info['nickname'] = $nickname;
             $info['avatar'] = $headimgurl;
             $info['last_login_ip'] = get_client_ip();
             Db::name('member')->where('uid',$data2['uid'])->update($info);
@@ -1491,10 +1490,10 @@ class ApiIndexController extends PluginRestBaseController
             if(!empty($dataz['data'])){
                 $result = ['uid'=>$uid];
             }
-            return $result;
+            return zy_array (true,'登录成功！',$result,200 ,false);
         }else{
             $result = array('uid'=>$uid);
-            return $result;
+            return zy_array (false,'登录失败！',$result,300 ,false);
         }
     }
 
