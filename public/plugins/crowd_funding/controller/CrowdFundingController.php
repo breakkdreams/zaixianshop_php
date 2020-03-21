@@ -183,4 +183,17 @@ class CrowdFundingController extends PluginAdminBaseController
         return zy_array(true,'修改成功','',200,false);
     }
 
+    public function deleteCrowFunding($isModule=false){
+        $param = $this->request->param();
+        if(empty($param['id'])){
+            $this->error("传参错误");
+        }
+        $id = $param['id'];
+        $re = Db::name('crowd_funding')->where('id',$id)->delete();
+        if(empty($re)){
+            return zy_array (false,'删除失败','删除失败',300 ,$isModule);
+        }
+        return zy_array (true,'删除成功','删除成功',200 ,$isModule);
+    }
+
 }

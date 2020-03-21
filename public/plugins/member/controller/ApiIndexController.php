@@ -1372,6 +1372,132 @@ class ApiIndexController extends PluginRestBaseController
 
     // ====================== 调用其他模块操作
 
+    /**
+     * 获取微信token并登录
+     */
+    public function getWechatInfo(){
+        //①、获取用户openid
+        $data = $this->GetOpenid($_POST['code']);      //获取openid
+
+        if(!$data['openid']) {
+            return zy_array(false,'获取openid失败','获取openid失败',300,false);
+        }
+        //②、获取用户信息
+        $user = self::curlGet('https://api.weixin.qq.com/sns/userinfo?access_token='.$data['access_token'].'&openid='.$data['openid'].'&lang=zh_CN');
+        $user_info = json_decode($user,true);
+        if($user_info){
+            $sex = '';
+            if($user_info['sex'] == 1){
+                $sex = '男';
+            }else if($user_info['sex'] == 2){
+                $sex = '女';
+            }
+            $result = $this->wechatLogin($sex,$user_info['nickname'],$user_info['unionid'],$user_info['openid'],$user_info['headimgurl']);
+            return zy_array (true,'登录成功！',$result,200 ,false);
+        }
+        return zy_array (false,'登录失败！','',300 ,false);
+    }
+
+    public function GetOpenid($code)
+    {
+        $openid = $this->getOpenidFromMp($code);
+        return $openid;
+    }
+    public function GetOpenidFromMp($code)
+    {
+        $url = $this->__CreateOauthUrlForOpenid($code);
+        $res = self::curlGet($url);
+        $data = json_decode($res,true);
+        $this->data = $data;
+        return $data;
+    }
+    private function __CreateOauthUrlForOpenid($code)
+    {
+        $urlObj["appid"] = 'wx069a9646f8420786';
+        $urlObj["secret"] = 'b610b629278ba6740a41721d94cbd86a';
+        $urlObj["code"] = $code;
+        $urlObj["grant_type"] = "authorization_code";
+        $bizString = $this->ToUrlParams($urlObj);
+        return "https://api.weixin.qq.com/sns/oauth2/access_token?".$bizString;
+    }
+    public static function curlGet($url = '', $options = array())
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        if (!empty($options)) {
+            curl_setopt_array($ch, $options);
+        }
+        //https请求 不验证证书和host
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        $data = curl_exec($ch);
+        curl_close($ch);
+        return $data;
+    }
+    private function ToUrlParams($urlObj)
+    {
+        $buff = "";
+        foreach ($urlObj as $k => $v)
+        {
+            if($k != "sign") $buff .= $k . "=" . $v . "&";
+        }
+        $buff = trim($buff, "&");
+        return $buff;
+    }
+    /**
+     * 微信登录
+     */
+    public function wechatLogin($sex,$nickname,$unionid,$openid,$headimgurl){
+        $isModule = false;
+        $uid = '';
+        $data2 = Db::name('member_detail')->where(['wechat_unionid'=>$unionid])->find();
+        if(empty($data2)){
+            //新增
+            $info['username'] = $nickname;
+            $info['avatar'] = $headimgurl;
+            $info['create_time'] = time();
+            $info['last_login_time'] = time();
+            $info['create_ip'] = get_client_ip();
+            $info['last_login_ip'] = get_client_ip();
+            $info['groupid'] = 1;
+            $re = Db::name('member')->insertGetId($info);
+            $uid = $re;
+            $detail_info['uid'] = $re;
+            $detail_info['wechat_unionid'] = $unionid;
+            $detail_info['wechat_name'] = $nickname;
+            $detail_info['wechat_headimg'] = $headimgurl;
+            $detail_info['wechat_sex'] = $sex;
+            $detail_info['wechatapp_openid'] = $openid;
+            Db::name('member_detail')->insert($detail_info);
+        }else{
+            $uid = $data2['uid'];
+            //更新
+            $info['username'] = $nickname;
+            $info['avatar'] = $headimgurl;
+            $info['last_login_ip'] = get_client_ip();
+            Db::name('member')->where('uid',$data2['uid'])->update($info);
+            $detail_info['wechat_name'] = $nickname;
+            $detail_info['wechat_headimg'] = $headimgurl;
+            Db::name('member_detail')->where('id',$data2['id'])->update($detail_info);
+        }
+
+        if (!empty($uid)) {//登陆
+            if($this->verify_isLock($uid)==false){
+                return zy_array (false,'账号被锁定！','',-4,$isModule);
+            }
+
+            $result = zy_userid_jwt($uid);
+            if(!empty($dataz['data'])){
+                $result = ['uid'=>$uid];
+            }
+            return $result;
+        }else{
+            $result = array('uid'=>$uid);
+            return $result;
+        }
+    }
+
 
 
 

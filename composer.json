@@ -30,7 +30,9 @@
         "ezyang/htmlpurifier": "^4.9",
         "php-ffmpeg/php-ffmpeg": "^0.14.0",
         "xaboy/form-builder": "^2.0",
-        "topthink/think-queue": "1.1.6"
+        "topthink/think-queue": "1.1.6",
+      "ext-curl": "*",
+      "ext-json": "*"
     },
     "extra": {
     },
